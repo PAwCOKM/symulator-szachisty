@@ -691,7 +691,7 @@ function beginRun(s: CareerState, d: TournamentDef, setup: Setup, rng: Rng) {
     const wd = d.women ? s.wworld : s.world;
     run.fieldIds = [wd.champion === -1 ? wd.challenger! : wd.champion];
   } else if (!d.league && !d.team && d.fieldSize >= 4 && d.fieldSize <= 12 && d.rounds % (d.fieldSize - 1) === 0) {
-    // turniej kołowy (np. Norway Chess): stały skład, z każdym grasz tyle razy, ile wynika z liczby rund (bywa 2 razy, raz każdym kolorem)
+    // turniej kołowy (np. Turniej Fiordów): stały skład, z każdym grasz tyle razy, ile wynika z liczby rund (bywa 2 razy, raz każdym kolorem)
     let base = d.women ? s.pool.filter((o) => o.female) : [...s.pool];
     if (!INTERNATIONAL_IDS.has(d.id)) {
       const pl = base.filter((o) => o.nat === 'POL');

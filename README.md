@@ -124,7 +124,7 @@ Aby zagrać na telefonie w tej samej sieci Wi-Fi, uruchom `npm run dev -- --host
 - **Zmęczenie:** klasyczne męczy najbardziej, szybkie mało, blitz prawie wcale; rywal męczy się podobnie, zależnie od kondycji.
 - **Czas na szachy** ogranicza etap życia: szkoła, liceum, studia, praca.
 - Statystyki mają maksimum 100, OVR to średnia ośmiu statystyk.
-- Ponad 200 turniejów (od szkolnych po Tata Steel, Norway Chess i mistrzostwa świata), ligi z sezonem meczów, turnieje drużynowe, 16 debiutów (8 białymi i 8 czarnymi), ponad 30 wydarzeń.
+- Ponad 200 turniejów (od szkolnych po turnieje elity i mistrzostwa świata), ligi z sezonem meczów, turnieje drużynowe, 16 debiutów (8 białymi i 8 czarnymi), ponad 30 wydarzeń.
 
 ## Informacje prawne
 
@@ -140,9 +140,9 @@ Gra jest udostępniana w stanie, w jakim jest, bez gwarancji.
 
 Lista kontrolna (to nie jest porada prawna):
 
-- [ ] **Dane administratora.** Skopiuj `apps/web/.env.example` do `apps/web/.env.local` i uzupełnij `VITE_OPERATOR_NAME` oraz `VITE_CONTACT_EMAIL`. Bez nich strony prawne nie pokazują kontaktu, a polityka prywatności wymaga wskazania administratora i sposobu kontaktu.
+- [ ] **Kontakt.** Administrator to nick Madyn, kontakt przez Discord. Wpisz link zaproszenia w `apps/web/.env.local` (`VITE_DISCORD_URL=...`, wzór w `apps/web/.env.example`), żeby strony prawne miały klikalny odnośnik.
 - [ ] **HTTPS i hosting.** Wystaw front (`npm run build`, katalog `apps/web/dist`) i API za HTTPS. Sprawdź, czy dostawca hostingu nie zbiera logów z adresami IP, i dopisz go do polityki prywatności, jeśli tak.
-- [ ] **Nazwy turniejów i sponsorów.** W grze są nazwy istniejących turniejów (m.in. Tata Steel, Norway Chess, Grenke, Superbet). Przy hostingu komercyjnym rozważ zamianę na własne, wymyślone nazwy.
+- [x] **Nazwy turniejów i sponsorów.** Nazwy istniejących imprez z nazwami sponsorów (np. Tata Steel, Norway Chess, Grenke, Superbet, Sinquefield) zostały zastąpione wymyślonymi.
 - [ ] **Licencja.** Repozytorium nie ma licencji (wszelkie prawa zastrzeżone). Dodaj ją przy upublicznieniu.
 - [ ] **Ochrona API.** API nie ma ograniczenia liczby zapytań ani moderacji imion w rankingu. Przy większym ruchu dodaj rate limiting, kopie zapasowe bazy (`apps/api/data/db.json` albo prawdziwa baza) i sposób zgłaszania nadużyć.
 - [ ] **Dostępność.** Ekrany zostały przeskanowane axe-core (WCAG 2.1 AA, jasny i ciemny motyw, komputer i telefon) bez błędów; pozostały jedynie uwagi o kolejności nagłówków.

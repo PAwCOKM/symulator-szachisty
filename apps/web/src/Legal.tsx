@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Icon, XScroll } from './ui';
 import { deleteMyData } from './api';
-import { CONTACT_EMAIL, LAST_UPDATED, OPERATOR_NAME } from './legalConfig';
+import { CONTACT_EMAIL, DISCORD_URL, LAST_UPDATED, OPERATOR_NAME } from './legalConfig';
 
 export type LegalSection = 'info' | 'privacy' | 'terms' | 'storage' | 'licenses';
 
@@ -37,16 +37,20 @@ export function Footer({ onLegal }: { onLegal: (s?: LegalSection) => void }) {
 }
 
 function Contact() {
-  if (!CONTACT_EMAIL && !OPERATOR_NAME) return null;
   return (
     <p>
-      <b>Administrator serwisu:</b> {OPERATOR_NAME || 'właściciel serwisu'}
+      <b>Administrator serwisu:</b> {OPERATOR_NAME} (nick). <b>Kontakt:</b>{' '}
+      {DISCORD_URL ? (
+        <a href={DISCORD_URL} target="_blank" rel="noopener noreferrer">Discord, nick {OPERATOR_NAME}</a>
+      ) : (
+        <>Discord, nick {OPERATOR_NAME}</>
+      )}
       {CONTACT_EMAIL && (
         <>
-          , kontakt: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+          {' '}lub e-mail: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
         </>
       )}
-      .
+      . Tą drogą możesz też zgłosić nadużycia, prosić o usunięcie wpisu z rankingu albo skorzystać ze swoich praw dotyczących danych.
     </p>
   );
 }
