@@ -1,4 +1,4 @@
-import { createHash, randomBytes, randomUUID } from 'node:crypto';
+import { createHash, randomBytes, randomInt, randomUUID } from 'node:crypto';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import Fastify from 'fastify';
@@ -16,6 +16,15 @@ const configSchema = z.object({
   startWhite: z.string().max(32),
 });
 const sha = (s: string) => createHash('sha256').update(s).digest('hex');
+
+/** Kod konta: 16 znaków bez łatwych do pomylenia (bez 0, 1, I, L, O), ok. 79 bitów losowości. Gracz może go zapisać i użyć na innym urządzeniu. */
+const CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+const newAccountCode = () => Array.from({ length: 16 }, () => CODE_ALPHABET[randomInt(CODE_ALPHABET.length)]).join('');
+/** Kod wpisany ręcznie bywa z myślnikami, spacjami i małymi literami: sprowadzamy go do postaci kanonicznej. Starsze, długie tokeny zostają bez zmian. */
+const normalizeToken = (t: string) => {
+  const c = t.replace(/[\s-]/g, '').toUpperCase();
+  return /^[A-HJKMNP-Z2-9]{16}$/.test(c) ? c : t;
+};
 
 export interface AppOptions {
   /** dozwolone źródła CORS (puste = dowolne, wygodne w rozwoju); w produkcji ustaw adres strony */
@@ -38,9 +47,9 @@ export async function buildApp(store: Store, opts: AppOptions = {}) {
 
   const auth = (req: { headers: Record<string, unknown> }) => {
     const h = String(req.headers.authorization ?? '');
-    const token = h.startsWith('Bearer ') ? h.slice(7) : '';
-    if (!token) return null;
-    const hash = sha(token);
+    const raw = h.startsWith('Bearer ') ? h.slice(7).trim() : '';
+    if (!raw) return null;
+    const hash = sha(normalizeToken(raw));
     return Object.values(store.data.players).find((p) => p.tokenHash === hash) ?? null;
   };
 
@@ -48,11 +57,29 @@ export async function buildApp(store: Store, opts: AppOptions = {}) {
 
   // konto anonimowe: tylko losowy token, w bazie trzymamy jego hash
   app.post('/v1/auth/anonymous', limit(limits.account), async () => {
-    const token = randomBytes(32).toString('hex');
+    const token = newAccountCode();
     const id = randomUUID();
     store.data.players[id] = { id, tokenHash: sha(token), createdAt: Date.now() };
     store.save();
     return { playerId: id, token };
+  });
+
+  // sprawdzenie kodu konta (np. po wpisaniu go w nowej przeglądarce)
+  app.get('/v1/me', limit(limits.career), async (req, reply) => {
+    const p = auth(req);
+    if (!p) return reply.code(401).send({ error: 'unauthorized' });
+    const careers = Object.values(store.data.careers).filter((c) => c.playerId === p.id);
+    return { careers: careers.length, finished: careers.filter((c) => c.status === 'FINISHED').length };
+  });
+
+  // wymiana starego, długiego tokenu na 16-znakowy kod konta (konto i wyniki zostają)
+  app.post('/v1/me/rotate', limit(limits.career), async (req, reply) => {
+    const p = auth(req);
+    if (!p) return reply.code(401).send({ error: 'unauthorized' });
+    const token = newAccountCode();
+    p.tokenHash = sha(token);
+    store.save();
+    return { token };
   });
 
   // prawo do usunięcia danych: kasuje anonimowe konto i wszystkie jego kariery

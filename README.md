@@ -132,7 +132,7 @@ Aby zagrać na telefonie w tej samej sieci Wi-Fi, uruchom `npm run dev -- --host
 
 **Wszyscy gracze są fikcyjni.** Zawodnicy, trenerzy i kluby są generowani losowo; zbieżność z prawdziwymi osobami lub klubami jest przypadkowa.
 
-**Prywatność.** Zapisy gry leżą w przeglądarce (localStorage), gra nie używa ciasteczek, analityki, reklam ani zasobów stron trzecich (czcionki są serwowane lokalnie). Udział w rankingu online jest dobrowolny (pole przy tworzeniu kariery): po zakończeniu kariery na serwer trafia wpisane imię postaci (widoczne publicznie), wynik i parametry startowe, pod losowym anonimowym kontem. Zapis akcji służy tylko do weryfikacji wyniku i nie jest przechowywany. Użytkownik może usunąć swoje konto i wyniki z serwera przyciskiem w Polityce prywatności. W grze są strony: Informacje prawne, Polityka prywatności, Regulamin, Cookies i pamięć lokalna, Licencje.
+**Prywatność.** Zapisy gry leżą w przeglądarce (localStorage), gra nie używa ciasteczek, analityki, reklam ani zasobów stron trzecich (czcionki są serwowane lokalnie). Udział w rankingu online jest dobrowolny (pole przy tworzeniu kariery): po zakończeniu kariery na serwer trafia wpisane imię postaci (widoczne publicznie), wynik i parametry startowe, pod losowym anonimowym kontem. Zapis akcji służy tylko do weryfikacji wyniku i nie jest przechowywany. Użytkownik może usunąć swoje konto i wyniki z serwera w Polityce prywatności, także z innej przeglądarki, wpisując 16-znakowy kod konta (XXXX-XXXX-XXXX-XXXX). W grze są strony: Informacje prawne, Polityka prywatności, Regulamin, Cookies i pamięć lokalna, Licencje.
 
 Gra jest udostępniana w stanie, w jakim jest, bez gwarancji.
 
@@ -178,7 +178,7 @@ npx tsx packages/engine/scripts/pool-check.ts   # rozkład rankingów w puli ryw
 
 - Silnik jest **czysty i deterministyczny**: stan jest serializowalny, a cała kariera to seed + lista akcji. Dzięki temu serwer może ją odtworzyć (`replay`) i zweryfikować wynik.
 - `ENGINE_VERSION` (w `packages/engine/src/model.ts`) rośnie przy każdej zmianie zawartości lub stanu gry; zapisy ze starszych wersji są odrzucane przez front i API.
-- API: `POST /v1/auth/anonymous`, `POST /v1/careers`, `POST /v1/careers/:id/finish`, `GET /v1/boards/:board?period=day|week|all`, `GET /health`. Zmienne: `PORT` (domyślnie 8787), `DB_FILE` (domyślnie `apps/api/data/db.json`, plik jest w `.gitignore`), `CORS_ORIGIN`, `TRUST_PROXY`. Testy API: `apps/api/test`.
+- API: `POST /v1/auth/anonymous` (zwraca 16-znakowy kod konta), `GET /v1/me`, `POST /v1/me/rotate`, `DELETE /v1/me`, `POST /v1/careers`, `POST /v1/careers/:id/finish`, `GET /v1/boards/:board?period=day|week|all`, `GET /health`. Zmienne: `PORT` (domyślnie 8787), `DB_FILE` (domyślnie `apps/api/data/db.json`, plik jest w `.gitignore`), `CORS_ORIGIN`, `TRUST_PROXY`. Testy API: `apps/api/test`.
 - Front trzyma zapisy w `localStorage` pod kluczami `szachy-save-v2-slot{n}`; kolejka zaległych wyników pod `szachy-pending-results`.
 
 ## Rozwiązywanie problemów

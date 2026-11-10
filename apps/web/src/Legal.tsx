@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Icon, XScroll } from './ui';
-import { deleteMyData } from './api';
+import { checkCode, cleanCode, deleteByCode, deleteMyData, formatCode, myAccountCode, useCode } from './api';
 import { CONTACT_EMAIL, DISCORD_URL, LAST_UPDATED, OPERATOR_NAME } from './legalConfig';
 
 export type LegalSection = 'info' | 'privacy' | 'terms' | 'storage' | 'licenses';
@@ -95,20 +95,123 @@ function Info() {
   );
 }
 
-function Privacy() {
+/** Kod konta (16 znaków): pozwala usunąć konto i wyniki z innej przeglądarki albo po wyczyszczeniu danych. */
+function AccountCode() {
+  const [code, setCode] = useState<string | null | undefined>(undefined);
+  const [shown, setShown] = useState(false);
+  const [input, setInput] = useState('');
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
-  const del = async () => {
-    if (!confirm('Usunąć z serwera wszystkie Twoje wyniki i anonimowe konto? Zapisy lokalne w przeglądarce zostają. Tej operacji nie można cofnąć.')) return;
+  useEffect(() => {
+    void myAccountCode().then(setCode);
+  }, []);
+  const copy = async () => {
+    if (!code) return;
+    try {
+      await navigator.clipboard.writeText(formatCode(code));
+      setMsg({ ok: true, text: 'Skopiowano kod do schowka.' });
+    } catch {
+      setMsg({ ok: false, text: 'Nie udało się skopiować. Zaznacz kod i skopiuj go ręcznie.' });
+    }
+  };
+  const valid = cleanCode(input).length >= 16;
+  const attach = async () => {
     setBusy(true);
     try {
-      const n = await deleteMyData();
-      setMsg({ ok: true, text: n === null ? 'Ta przeglądarka nie ma konta w rankingu, więc nie ma czego usuwać.' : `Usunięto anonimowe konto i wyniki z serwera (kariery: ${n}).` });
+      const n = await checkCode(input);
+      if (n === null) setMsg({ ok: false, text: 'Nie znaleziono konta o takim kodzie. Sprawdź, czy kod jest wpisany poprawnie.' });
+      else {
+        useCode(input);
+        setCode(cleanCode(input));
+        setInput('');
+        setMsg({ ok: true, text: `Ta przeglądarka używa teraz tego konta (wyniki w rankingu: ${n}).` });
+      }
     } catch {
       setMsg({ ok: false, text: 'Nie udało się połączyć z serwerem. Spróbuj ponownie później.' });
     }
     setBusy(false);
   };
+  const eraseByInput = async () => {
+    if (!confirm('Usunąć z serwera konto o tym kodzie wraz ze wszystkimi wynikami? Tej operacji nie można cofnąć.')) return;
+    setBusy(true);
+    try {
+      const n = await deleteByCode(input);
+      if (n === null) setMsg({ ok: false, text: 'Nie znaleziono konta o takim kodzie.' });
+      else {
+        setMsg({ ok: true, text: `Usunięto konto i wyniki z serwera (kariery: ${n}).` });
+        setInput('');
+        if (code && cleanCode(input) === code) setCode(null);
+      }
+    } catch {
+      setMsg({ ok: false, text: 'Nie udało się połączyć z serwerem. Spróbuj ponownie później.' });
+    }
+    setBusy(false);
+  };
+  const eraseMine = async () => {
+    if (!confirm('Usunąć z serwera wszystkie Twoje wyniki i anonimowe konto? Zapisy lokalne w przeglądarce zostają. Tej operacji nie można cofnąć.')) return;
+    setBusy(true);
+    try {
+      const n = await deleteMyData();
+      setMsg({ ok: true, text: n === null ? 'Ta przeglądarka nie ma konta w rankingu, więc nie ma czego usuwać.' : `Usunięto anonimowe konto i wyniki z serwera (kariery: ${n}).` });
+      setCode(null);
+    } catch {
+      setMsg({ ok: false, text: 'Nie udało się połączyć z serwerem. Spróbuj ponownie później.' });
+    }
+    setBusy(false);
+  };
+  return (
+    <div className="acct">
+      <h4>Kod konta</h4>
+      {code === undefined ? (
+        <p className="muted">Sprawdzanie…</p>
+      ) : code ? (
+        <>
+          <p>
+            Twój kod konta w rankingu:{' '}
+            <code className="acct-code" aria-live="polite">{shown ? formatCode(code) : '•••• •••• •••• ••••'}</code>
+          </p>
+          <div className="row">
+            <button type="button" className="ghost small" onClick={() => setShown((v) => !v)} aria-pressed={shown}>{shown ? 'Ukryj kod' : 'Pokaż kod'}</button>
+            <button type="button" className="ghost small" onClick={copy}>Kopiuj kod</button>
+          </div>
+          <p className="muted">
+            Zapisz go w bezpiecznym miejscu. Dzięki niemu możesz usunąć konto i wyniki z innej przeglądarki albo po wyczyszczeniu danych strony. Każdy, kto zna kod, może usunąć te wyniki, więc nie udostępniaj go.
+          </p>
+        </>
+      ) : (
+        <p className="muted">Ta przeglądarka nie ma jeszcze konta w rankingu. Powstanie, gdy zaczniesz karierę online.</p>
+      )}
+
+      <h4>Masz kod z innej przeglądarki?</h4>
+      <label className="acct-field">
+        <span className="muted">Wpisz 16-znakowy kod (myślniki i wielkość liter nie mają znaczenia)</span>
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="XXXX-XXXX-XXXX-XXXX"
+          autoComplete="off"
+          autoCapitalize="characters"
+          spellCheck={false}
+          maxLength={24}
+        />
+      </label>
+      <div className="row">
+        <button type="button" className="ghost" onClick={attach} disabled={busy || !valid}>Użyj tego konta w tej przeglądarce</button>
+        <button type="button" className="ghost" onClick={eraseByInput} disabled={busy || !valid}>Usuń konto o tym kodzie</button>
+      </div>
+
+      <h4>Usuń dane tej przeglądarki</h4>
+      <p>
+        <button type="button" onClick={eraseMine} disabled={busy}>Usuń moje wyniki i konto z serwera</button>
+      </p>
+      {msg && <p role="status" className={msg.ok ? 'good' : 'bad'}>{msg.text}</p>}
+      <p className="muted">Usuwane są wszystkie wyniki konta naraz, nie pojedyncze wpisy. Zapisy gry w przeglądarce zostają.</p>
+    </div>
+  );
+}
+
+function Privacy() {
   return (
     <>
       <p className="muted">Ostatnia aktualizacja: {LAST_UPDATED}.</p>
@@ -121,7 +224,7 @@ function Privacy() {
           <b>Tryb offline:</b> zapisy gry zostają wyłącznie w Twojej przeglądarce. Nic nie jest wysyłane na serwer.
         </li>
         <li>
-          <b>Tryb online (ranking):</b> losowy identyfikator anonimowego konta, token zapisany w przeglądarce (na serwerze tylko jego skrót), imię postaci
+          <b>Tryb online (ranking):</b> losowy identyfikator anonimowego konta, 16-znakowy kod konta zapisany w przeglądarce (na serwerze tylko jego skrót), imię postaci
           wpisane przez Ciebie, parametry startowe kariery (płeć, styl, miasto, debiut), wynik kariery (ranking, kategoria, punkty, liczba tygodni) oraz
           daty rozpoczęcia i zakończenia. Zapis wykonanych akcji jest wysyłany tylko po to, by serwer sprawdził wynik, i nie jest przechowywany.
         </li>
@@ -144,19 +247,15 @@ function Privacy() {
       </p>
       <h3>Jak długo przechowujemy dane</h3>
       <p>
-        Do czasu, gdy sam je usuniesz (przycisk poniżej) albo zażądasz usunięcia, oraz do czasu usunięcia wpisów naruszających regulamin. Niedokończone kariery i nieużywane konta są usuwane po 60 dniach.
+        Do czasu, gdy sam je usuniesz (poniżej) albo zażądasz usunięcia, oraz do czasu usunięcia wpisów naruszających regulamin. Niedokończone kariery i nieużywane konta są usuwane po 60 dniach.
         Serwer robi kopię zapasową bazy raz na dobę (jedną, podmienianą), więc usunięte dane znikają również z kopii najpóźniej po 24 godzinach.
       </p>
       <h3>Twoje prawa</h3>
       <p>
         Masz prawo dostępu do danych, sprostowania, usunięcia, ograniczenia przetwarzania, sprzeciwu oraz wniesienia skargi do Prezesa Urzędu Ochrony
-        Danych Osobowych. Ponieważ konto jest anonimowe, w kontakcie możemy poprosić o podanie imienia postaci i przybliżonej daty wyniku.
+        Danych Osobowych. Konto jest anonimowe, więc w kontakcie możemy poprosić o kod konta albo, jeśli go nie masz, o imię postaci i przybliżoną datę wyniku.
       </p>
-      <p>
-        <button type="button" onClick={del} disabled={busy}>Usuń moje wyniki i konto z serwera</button>
-      </p>
-      {msg && <p role="status" className={msg.ok ? 'good' : 'bad'}>{msg.text}</p>}
-      <p className="muted">Usunięcie dotyczy konta powiązanego z tą przeglądarką. Wyniki zapisane z innych przeglądarek wymagają usunięcia z nich lub kontaktu z administratorem.</p>
+      <AccountCode />
       <h3>Dzieci</h3>
       <p>Gra nie jest kierowana do zbierania danych od dzieci. Osoby niepełnoletnie powinny korzystać z rankingu online za wiedzą opiekuna i nie wpisywać danych osobowych.</p>
     </>
@@ -206,7 +305,7 @@ function Storage() {
         <thead><tr><th>Klucz</th><th>Do czego służy</th></tr></thead>
         <tbody>
           <tr><td><code>szachy-save-v2-slot0..2</code></td><td>zapisy karier (trzy sloty)</td></tr>
-          <tr><td><code>szachy-token</code></td><td>anonimowy token konta rankingu (tylko w trybie online)</td></tr>
+          <tr><td><code>szachy-token</code></td><td>kod konta rankingu, 16 znaków (tylko w trybie online)</td></tr>
           <tr><td><code>szachy-pending-results</code></td><td>wynik czekający na wysłanie do rankingu, gdy serwer był niedostępny</td></tr>
         </tbody>
       </table>

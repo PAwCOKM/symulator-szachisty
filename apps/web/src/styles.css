@@ -429,6 +429,12 @@
   .consent .check { display: flex; align-items: center; gap: 0.6rem; min-block-size: 2.5rem; cursor: pointer; }
   .consent input[type='checkbox'] { inline-size: 1.25rem; block-size: 1.25rem; accent-color: var(--felt); }
   .consent p { margin-block-start: 0.4rem; }
+  .acct { margin-block: 1rem; padding: 0.9rem 1rem; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-2); }
+  .acct h4 { margin-block: 1rem 0.4rem; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted); }
+  .acct h4:first-child { margin-block-start: 0; }
+  .acct-code { font-family: var(--font-num); font-size: 1.05rem; padding: 0.2rem 0.5rem; border-radius: var(--radius-sm); background: var(--surface); border: 1px solid var(--line); letter-spacing: 0.06em; }
+  .acct-field { display: grid; gap: 0.3rem; margin-block-end: 0.5rem; cursor: default; }
+  .acct-field input { max-inline-size: 22rem; font-family: var(--font-num); letter-spacing: 0.06em; }
   /* formularz przygotowania */
   .setup { display: grid; gap: 0.9rem; }
   .sf-top { display: flex; gap: 1rem; align-items: flex-start; flex-wrap: wrap; }

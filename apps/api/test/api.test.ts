@@ -106,3 +106,31 @@ describe('backup and recovery', () => {
     expect(store.data.players.p).toBeUndefined();
   });
 });
+
+describe('account code', () => {
+  it('issues a 16-character code that works in any notation and can be checked and rotated', async () => {
+    const { store } = tmpStore();
+    const app = await buildApp(store, { limits: { global: 1000, account: 100, career: 100, finish: 100, erase: 100 } });
+    const { token } = (await app.inject({ method: 'POST', url: '/v1/auth/anonymous' })).json();
+    expect(token).toMatch(/^[A-HJKMNP-Z2-9]{16}$/);
+    const dashed = `${token.slice(0, 4)}-${token.slice(4, 8)}-${token.slice(8, 12)}-${token.slice(12)}`.toLowerCase();
+    const me = await app.inject({ method: 'GET', url: '/v1/me', headers: { authorization: `Bearer ${dashed}` } });
+    expect(me.statusCode).toBe(200);
+    const wrong = await app.inject({ method: 'GET', url: '/v1/me', headers: { authorization: 'Bearer AAAAAAAAAAAAAAAA' } });
+    expect(wrong.statusCode).toBe(401);
+    const rot = (await app.inject({ method: 'POST', url: '/v1/me/rotate', headers: { authorization: `Bearer ${token}` } })).json();
+    expect(rot.token).not.toBe(token);
+    expect((await app.inject({ method: 'GET', url: '/v1/me', headers: { authorization: `Bearer ${token}` } })).statusCode).toBe(401);
+    expect((await app.inject({ method: 'GET', url: '/v1/me', headers: { authorization: `Bearer ${rot.token}` } })).statusCode).toBe(200);
+    await app.close();
+  });
+  it('still accepts legacy long tokens', async () => {
+    const { store } = tmpStore();
+    const legacy = 'a'.repeat(64);
+    const { createHash } = await import('node:crypto');
+    store.data.players.old = { id: 'old', tokenHash: createHash('sha256').update(legacy).digest('hex'), createdAt: Date.now() };
+    const app = await buildApp(store);
+    expect((await app.inject({ method: 'GET', url: '/v1/me', headers: { authorization: `Bearer ${legacy}` } })).statusCode).toBe(200);
+    await app.close();
+  });
+});
