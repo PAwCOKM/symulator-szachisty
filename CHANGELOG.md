@@ -52,5 +52,9 @@ Wersje silnika gry (`ENGINE_VERSION`). Przy każdej zmianie zawartości lub stan
 - **Pola turniejów:** turnieje krajowe (mistrzostwa Polski, ligi, klubowe, szkolne) gromadzą Polaków; międzynarodowe (Tata Steel, Norway Chess, Grand Swiss, Puchar Świata, olimpiady, mistrzostwa Europy i świata) - zawodników z całego świata. Kod kraju widać przy rywalu i w rankingu świata.
 - **Kalendarz turniejów:** sortowanie wg terminu albo średniego elo (rosnąco/malejąco) i filtr zakresu średniego elo (od/do).
 
+## Wersja 27
+- Usunięte z list nazwisk nazwiska prawdziwych zawodników i z nazw klubów nazwy istniejących klubów (wszyscy gracze i kluby fikcyjni).
+
 ## Poza silnikiem
 - Responsywny układ na telefony (przewijane zakładki, tabele przewijane w bok), przebudowane karty zapisów, formularz przygotowania i kalendarz turniejów (sortowanie i filtr po średnim elo), karta rywala, prawdziwy PDF z podsumowaniem kariery, kolejka zaległych wyników rankingu.
+- Stopka z informacją, że gra jest nieoficjalna, a gracze fikcyjni, oraz strona „Informacje prawne i prywatność”.

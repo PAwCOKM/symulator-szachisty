@@ -14,6 +14,7 @@ Debiuty są kartami: im częściej je grasz i trenujesz, tym lepiej je znasz. Ry
 - [Instrukcja obsługi](#instrukcja-obsługi)
 - [Gra na telefonie](#gra-na-telefonie)
 - [Zasady gry w skrócie](#zasady-gry-w-skrócie)
+- [Informacje prawne](#informacje-prawne)
 - [Dla programistów](#dla-programistów)
 - [Rozwiązywanie problemów](#rozwiązywanie-problemów)
 - [Historia zmian](CHANGELOG.md)
@@ -124,6 +125,16 @@ Aby zagrać na telefonie w tej samej sieci Wi-Fi, uruchom `npm run dev -- --host
 - **Czas na szachy** ogranicza etap życia: szkoła, liceum, studia, praca.
 - Statystyki mają maksimum 100, OVR to średnia ośmiu statystyk.
 - Ponad 200 turniejów (od szkolnych po Tata Steel, Norway Chess i mistrzostwa świata), ligi z sezonem meczów, turnieje drużynowe, 16 debiutów (8 białymi i 8 czarnymi), ponad 30 wydarzeń.
+
+## Informacje prawne
+
+**Gra nieoficjalna.** Symulator Szachisty jest niezależnym projektem rozrywkowym, niepowiązanym z FIDE, PZSzach (Polskim Związkiem Szachowym), federacjami, organizatorami turniejów, drużynami, klubami, obiektami, sponsorami ani żadną organizacją szachową. Nazwy organizacji, turniejów, miast, tytułów i kategorii służą wyłącznie identyfikacji rzeczywistości sportowej, którą gra przybliża; nie oznaczają współpracy ani poparcia, a znaki towarowe należą do ich właścicieli. Zasady (kategorie, normy, tytuły, rankingi) są uproszczone i mogą odbiegać od obowiązujących regulaminów.
+
+**Wszyscy gracze są fikcyjni.** Zawodnicy, trenerzy i kluby są generowani losowo; zbieżność z prawdziwymi osobami lub klubami jest przypadkowa.
+
+**Prywatność.** Zapisy gry leżą w przeglądarce (localStorage). Gra nie używa ciasteczek reklamowych ani analityki. Przy zakończeniu kariery na serwer rankingów trafia wpisane imię postaci (widoczne publicznie), wynik i log akcji do weryfikacji, pod losowym anonimowym identyfikatorem konta. Czcionki ładowane są z Google Fonts. Pełny tekst jest w grze (stopka, „Informacje prawne i prywatność").
+
+Gra jest udostępniana w stanie, w jakim jest, bez gwarancji.
 
 ## Dla programistów
 

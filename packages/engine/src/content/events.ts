@@ -11,8 +11,8 @@ import { CITIES } from './cities';
 export { CITIES };
 const CLUB_PREFIX: string[][] = [
   ['UKS Skoczek', 'SKSz Pionek', 'KSz Gambit'],
-  ['MKS Hetman', 'KSz Wieża', 'KS Polonia'],
-  ['KSz Śląsk', 'KSz Legia', 'Wasko Hetman'],
+  ['MKS Hetman', 'KSz Wieża', 'KSz Roszada'],
+  ['KSz Przekątna', 'KSz Debiut', 'KSz Mat'],
 ];
 export function makeClubNames(city: string, pick: <T>(a: T[]) => T): string[] {
   return CLUB_PREFIX.map((p) => `${pick(p)} ${city}`);

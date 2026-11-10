@@ -6,10 +6,10 @@ import type { Rng } from '../rng';
 import { foreignName, polishShare } from './names';
 
 const FIRST = ['Adam', 'Piotr', 'Michał', 'Jakub', 'Kacper', 'Szymon', 'Bartosz', 'Mateusz', 'Tomasz', 'Paweł', 'Krzysztof', 'Marcin', 'Łukasz', 'Filip', 'Antoni', 'Igor', 'Wojciech', 'Jan', 'Radosław', 'Maciej', 'Oskar', 'Hubert', 'Dawid', 'Karol', 'Franciszek', 'Aleksander', 'Nikodem', 'Stanisław', 'Zbigniew', 'Andrzej'];
-const LAST = ['Kowalski', 'Nowak', 'Wiśniewski', 'Wójcik', 'Kamiński', 'Lewandowski', 'Zieliński', 'Szymański', 'Woźniak', 'Dąbrowski', 'Kozłowski', 'Jankowski', 'Mazur', 'Krawczyk', 'Piotrowski', 'Grabowski', 'Pawłowski', 'Michalski', 'Król', 'Wieczorek', 'Jabłoński', 'Wróbel', 'Majewski', 'Olszewski', 'Stępień', 'Malinowski', 'Jaworski', 'Adamczyk', 'Dudek', 'Zając', 'Gumularz', 'Teclaf', 'Sokołowski'];
+const LAST = ['Kowalski', 'Nowak', 'Wiśniewski', 'Wójcik', 'Kamiński', 'Lewandowski', 'Zieliński', 'Szymański', 'Woźniak', 'Dąbrowski', 'Kozłowski', 'Jankowski', 'Mazur', 'Krawczyk', 'Piotrowski', 'Grabowski', 'Pawłowski', 'Michalski', 'Król', 'Wieczorek', 'Jabłoński', 'Wróbel', 'Majewski', 'Olszewski', 'Stępień', 'Malinowski', 'Jaworski', 'Adamczyk', 'Dudek', 'Zając', 'Sokołowski'];
 
 const FIRST_F = ['Anna', 'Maria', 'Zofia', 'Julia', 'Hanna', 'Alicja', 'Natalia', 'Oliwia', 'Karolina', 'Magdalena', 'Aleksandra', 'Agnieszka', 'Weronika', 'Monika', 'Kinga', 'Iga', 'Paulina', 'Olga', 'Elżbieta', 'Marta', 'Dominika', 'Katarzyna'];
-const LAST_F = ['Kowalska', 'Nowak', 'Wiśniewska', 'Wójcik', 'Kamińska', 'Lewandowska', 'Zielińska', 'Szymańska', 'Woźniak', 'Dąbrowska', 'Kozłowska', 'Jankowska', 'Mazur', 'Krawczyk', 'Piotrowska', 'Grabowska', 'Kiołbasa', 'Michalska', 'Król', 'Wieczorek', 'Jabłońska', 'Majewska', 'Olszewska', 'Stępień'];
+const LAST_F = ['Kowalska', 'Nowak', 'Wiśniewska', 'Wójcik', 'Kamińska', 'Lewandowska', 'Zielińska', 'Szymańska', 'Woźniak', 'Dąbrowska', 'Kozłowska', 'Jankowska', 'Mazur', 'Krawczyk', 'Piotrowska', 'Grabowska', 'Michalska', 'Król', 'Wieczorek', 'Jabłońska', 'Majewska', 'Olszewska', 'Stępień'];
 
 /** Pasma siły zawodniczek: mniej graczek na szczycie. */
 const BANDS_F: [number, number, number][] = [

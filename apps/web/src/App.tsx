@@ -4,9 +4,10 @@ import { Icon } from './ui';
 import { WHITE_CARDS, retireIfNeeded } from './helpers';
 import { board, startOnline, type BoardPeriod, type BoardRow } from './api';
 import { Game } from './Game';
+import { Footer, Legal } from './Legal';
 import { flushPending, slotInfos, useGame, wipeSlot, type SlotInfo } from './store';
 
-type Screen = 'home' | 'new' | 'game' | 'boards';
+type Screen = 'home' | 'new' | 'game' | 'boards' | 'legal';
 
 export function App() {
   const { career, load, clear, dispatch } = useGame();
@@ -14,6 +15,11 @@ export function App() {
   const [newSlot, setNewSlot] = useState(0);
   const [infos, setInfos] = useState<SlotInfo[]>(() => slotInfos());
   const refresh = () => setInfos(slotInfos());
+  const [legalFrom, setLegalFrom] = useState<Screen>('home');
+  const openLegal = () => {
+    if (screen !== 'legal') setLegalFrom(screen);
+    setScreen('legal');
+  };
   const [flushed, setFlushed] = useState(0);
   useEffect(() => {
     void flushPending().then((n) => n && setFlushed(n));
@@ -25,15 +31,16 @@ export function App() {
 
   if (screen === 'game' && career)
     return (
-      <Shell>
+      <Shell onLegal={openLegal}>
         <Game s={career} onExit={home} onFinished={() => { clear(); home(); }} />
         {!career.ended && ageOf(career) >= 20 && <p className="muted"><button className="ghost" onClick={() => confirm('Zakończyć karierę?') && dispatch({ type: 'retire' })}>Zakończ karierę</button></p>}
       </Shell>
     );
-  if (screen === 'new') return <Shell><NewCareer slot={newSlot} onDone={() => setScreen('game')} onBack={home} /></Shell>;
-  if (screen === 'boards') return <Shell><Boards onBack={home} /></Shell>;
+  if (screen === 'legal') return <Shell onLegal={openLegal}><Legal onBack={() => (legalFrom === 'game' && !career ? home() : setScreen(legalFrom))} /></Shell>;
+  if (screen === 'new') return <Shell onLegal={openLegal}><NewCareer slot={newSlot} onDone={() => setScreen('game')} onBack={home} /></Shell>;
+  if (screen === 'boards') return <Shell onLegal={openLegal}><Boards onBack={home} /></Shell>;
   return (
-    <Shell>
+    <Shell onLegal={openLegal}>
       <div className="panel hero">
         <h1><Icon name="pawn" /> Kariera Szachisty</h1>
         {flushed > 0 && <p role="status" className="good">Dosłano do rankingu zaległe wyniki: {flushed}.</p>}
@@ -100,8 +107,13 @@ export function App() {
   );
 }
 
-function Shell({ children }: { children: React.ReactNode }) {
-  return <div className="app">{children}</div>;
+function Shell({ children, onLegal }: { children: React.ReactNode; onLegal: () => void }) {
+  return (
+    <div className="app">
+      {children}
+      <Footer onLegal={onLegal} />
+    </div>
+  );
 }
 
 function NewCareer({ slot, onDone, onBack }: { slot: number; onDone: () => void; onBack: () => void }) {

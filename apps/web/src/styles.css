@@ -410,6 +410,14 @@
     .rank-table .bd .tag.norm .bd-ico { display: inline; }
     .rank-table .bd .tag { padding: 0.15rem 0.35rem; }
   }
+  /* stopka i informacje prawne */
+  .legal-footer { margin-block-start: 2rem; padding-block: 1rem 0.5rem; border-block-start: 1px solid var(--line); text-align: center; font-size: 0.78rem; color: var(--ink-muted); display: grid; gap: 0.3rem; }
+  .legal-footer p { margin: 0; max-inline-size: 48rem; margin-inline: auto; }
+  button.linklike { min-block-size: 0; padding: 0; border: 0; background: none; color: var(--ink-muted); font: inherit; font-weight: 500; text-decoration: underline; text-underline-offset: 0.2em; cursor: pointer; display: inline; }
+  button.linklike:hover { color: var(--ink); box-shadow: none; filter: none; }
+  .legal h3 { margin-block: 1.2rem 0.4rem; }
+  .legal p, .legal li { max-inline-size: 46rem; }
+  .legal ul { padding-inline-start: 1.2rem; display: grid; gap: 0.4rem; }
   /* formularz przygotowania */
   .setup { display: grid; gap: 0.9rem; }
   .sf-top { display: flex; gap: 1rem; align-items: flex-start; flex-wrap: wrap; }
