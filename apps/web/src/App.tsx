@@ -130,9 +130,10 @@ function NewCareer({ slot, onDone, onBack }: { slot: number; onDone: () => void;
         <label>Płeć{' '}
           <select value={gender} onChange={(e) => setGender(e.target.value as 'm' | 'f')}>
             <option value="m">Mężczyzna</option>
-            <option value="f">Kobieta (turnieje kobiece, własne progi kategorii i tytuły W)</option>
+            <option value="f">Kobieta</option>
           </select>
         </label>
+        {gender === 'f' && <p className="muted">Kobiety mają własne turnieje, progi polskich kategorii i tytuły WCM-WGM; mogą też grać w turniejach otwartych.</p>}
       </div>
       <div className="row">
         <label>Miasto{' '}
@@ -146,10 +147,11 @@ function NewCareer({ slot, onDone, onBack }: { slot: number; onDone: () => void;
         <label>Styl{' '}
           <select value={arch} onChange={(e) => setArch(e.target.value as typeof arch)}>
             <option value="allround">Uniwersalny</option>
-            <option value="tactician">Taktyk (mocna taktyka i kalkulacja)</option>
-            <option value="positional">Pozycyjniak (strategia, końcówki, zegar)</option>
+            <option value="tactician">Taktyk</option>
+            <option value="positional">Pozycyjniak</option>
           </select>
         </label>
+        <p className="muted">{arch === 'tactician' ? 'Mocna taktyka i kalkulacja.' : arch === 'positional' ? 'Strategia, końcówki i zegar.' : 'Zrównoważony start bez wyraźnej specjalizacji.'}</p>
       </div>
       <div className="row">
         <label>Pierwszy debiut białymi{' '}

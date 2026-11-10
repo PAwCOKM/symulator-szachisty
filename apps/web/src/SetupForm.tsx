@@ -15,6 +15,7 @@ import {
 } from '@chess/engine';
 import { Board } from './Board';
 
+const SHORT_GROUP: Record<Group, string> = { e4: '1.e4', d4: '1.d4', flank: 'boczne' };
 const m = (s: CareerState, id: string | null) => (id ? Math.round(s.cards[id]?.mastery ?? 0) : 0);
 
 export interface FocusOption {
@@ -51,7 +52,7 @@ export function SetupForm({
               <select id="sf-white" value={setup.white} onChange={(e) => onChange({ ...setup, white: e.target.value })}>
                 {WHITE_CARDS.map((c) => (
                   <option key={c.id} value={c.id}>
-                    {c.name} [{GROUP_LABELS[c.group]}] - {masteryLabel(m(s, c.id))} ({m(s, c.id)})
+                    {c.name} ({SHORT_GROUP[c.group]}) · {masteryLabel(m(s, c.id))} {m(s, c.id)}
                   </option>
                 ))}
               </select>
@@ -67,7 +68,7 @@ export function SetupForm({
                   <option value="">(brak - improwizuję)</option>
                   {BLACK_CARDS.filter((c) => c.group === g).map((c) => (
                     <option key={c.id} value={c.id}>
-                      {c.name} - {masteryLabel(m(s, c.id))} ({m(s, c.id)})
+                      {c.name} · {masteryLabel(m(s, c.id))} {m(s, c.id)}
                     </option>
                   ))}
                 </select>

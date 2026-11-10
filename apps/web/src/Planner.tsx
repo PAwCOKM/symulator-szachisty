@@ -307,7 +307,7 @@ export function Planner({ s }: { s: CareerState }) {
                       {SKILL_KEYS.map((k) => <option key={k} value={`skill:${k}`}>{SKILL_LABELS[k]} (teraz {fmt1(P.skills[k])})</option>)}
                     </optgroup>
                     <optgroup label="Nauka debiutu (teoria)">
-                      {CARDS.map((c) => <option key={c.id} value={`study:${c.id}`}>{c.side === 'w' ? 'Białe' : 'Czarne'}: {c.name} (znajomość {Math.round(s.cards[c.id]?.mastery ?? 0)})</option>)}
+                      {CARDS.map((c) => <option key={c.id} value={`study:${c.id}`}>{c.side === 'w' ? 'Białe' : 'Czarne'}: {c.name} · {Math.round(s.cards[c.id]?.mastery ?? 0)}</option>)}
                     </optgroup>
                     <optgroup label="Inne">
                       <option value="analyze">Analiza własnych porażek</option>
@@ -342,14 +342,14 @@ export function Planner({ s }: { s: CareerState }) {
             <option value="">Bez trenera</option>
             {COACHES.map((c) => (
               <option key={c.id} value={c.id} disabled={P.rating < c.minRating}>
-                {c.name} - {c.cost} zł/tydz.{P.rating < c.minRating ? ` (od rankingu ${c.minRating})` : ''}
+                {c.name} · {c.cost} zł{P.rating < c.minRating ? ` · od ${c.minRating}` : ''}
               </option>
             ))}
           </select>
           <span className="muted">
             {P.coach
               ? (() => { const c = COACHES.find((x) => x.id === P.coach)!; return c.skills === 'all' ? `Przyspiesza naukę wszystkiego (×${c.mult}), debiutów ×${c.openings}.` : `Przyspiesza: ${c.skills.map((k) => SKILL_LABELS[k as SkillKey]).join(', ')} (×${c.mult}); debiuty ×${c.openings}.`; })()
-              : 'Trener przyspiesza naukę, ale kosztuje co tydzień.'}
+              : 'Trener przyspiesza naukę. Koszt (w zł) płacisz co tydzień; wyższy trener wymaga odpowiedniego rankingu.'}
           </span>
         </div>
       </div>

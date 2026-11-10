@@ -56,7 +56,7 @@ export function Stats({ s }: { s: CareerState }) {
       <div className="panel">
         <h3>Rok po roku</h3>
         <div className="scroll">
-          <table>
+          <table className="nowrap-table">
             <thead><tr><th>Rok</th><th>Wiek</th><th>Klasyczny</th><th>Szybki</th><th>Błysk.</th><th>Turnieje</th><th>Wygrane</th><th>Najlepsze m.</th><th>Nagrody</th></tr></thead>
             <tbody>
               {years.map((r) => (
@@ -71,7 +71,7 @@ export function Stats({ s }: { s: CareerState }) {
         <h3><Icon name="book" /> Debiuty w praktyce</h3>
         {openings.length === 0 ? <p className="muted">Jeszcze nie zagrałeś partii.</p> : (
           <div className="scroll">
-            <table>
+            <table className="nowrap-table">
               <thead><tr><th>Debiut</th><th>Partie</th><th>W-R-P</th><th>Punkty</th><th>Znajomość</th></tr></thead>
               <tbody>
                 {openings.map((o) => (
@@ -86,7 +86,7 @@ export function Stats({ s }: { s: CareerState }) {
       <div className="panel">
         <h3><Icon name="users" /> Rywale z historią</h3>
         {rivals.length === 0 ? <p className="muted">Gdy kilka razy zagrasz z tym samym rywalem, pojawi się tu bilans. Rywal, który regularnie Cię pokonuje, zaczyna się na Ciebie przygotowywać (nemezis).</p> : (
-          <table>
+          <table className="nowrap-table">
             <tbody>
               {rivals.map((r) => (
                 <tr key={r.id}><td>{r.name}</td><td>{r.n} partii</td><td>{r.w}-{r.d}-{r.l}</td><td className={r.l - r.w >= 2 && r.l >= 3 ? 'bad' : ''}>{r.l - r.w >= 2 && r.l >= 3 ? 'nemezis' : ''}</td></tr>

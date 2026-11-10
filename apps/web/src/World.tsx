@@ -71,15 +71,15 @@ function WorldSection({ s, women }: { s: CareerState; women: boolean }) {
       <div className="panel">
         <h3><Icon name="users" /> Czołówka rankingu {women ? 'kobiet' : 'światowego'} (klasyczne)</h3>
         <div className="scroll">
-          <table>
+          <table className="rank-table">
             <tbody>
               {v.rows.map((r) => (
                 <tr key={`${r.id}`} className={r.isPlayer ? 'me' : ''}>
-                  <td className="num">{r.rank}</td>
-                  <td>{r.name}{r.isPlayer && ' (Ty)'} <span className="muted nat">{r.nat}</span></td>
-                  <td className="muted">{r.title}</td>
-                  <td className="num"><b>{r.rating}</b></td>
-                  <td>{r.champion ? <span className="tag league"><Icon name="trophy" /> {women ? 'mistrzyni' : 'mistrz'}</span> : r.challenger ? <span className="tag norm">challenger</span> : ''}</td>
+                  <td className="num rk">{r.rank}</td>
+                  <td className="nm"><span className="nm-name">{r.name}{r.isPlayer && ' (Ty)'}</span> <span className="muted nat">{r.nat}</span></td>
+                  <td className="muted ti">{r.title}</td>
+                  <td className="num rt"><b>{r.rating}</b></td>
+                  <td className="bd">{r.champion ? <span className="tag league" title={women ? 'mistrzyni świata' : 'mistrz świata'}><Icon name="trophy" /><span className="bd-txt"> {women ? 'mistrzyni' : 'mistrz'}</span></span> : r.challenger ? <span className="tag norm" title="challenger"><span className="bd-txt">challenger</span><span className="bd-ico" aria-hidden="true">C</span></span> : ''}</td>
                 </tr>
               ))}
             </tbody>

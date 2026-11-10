@@ -390,6 +390,26 @@
   .chipbtn { min-block-size: 0; padding: 0.2rem 0.7rem; font-size: 0.8rem; font-weight: 500; border-radius: 99px; background: transparent; color: var(--ink-muted); border: 1px solid var(--line); }
   .chipbtn:hover { border-color: var(--felt); color: var(--ink); }
   .chipbtn.on { border-color: var(--felt); color: var(--ink); background: color-mix(in srgb, var(--felt) 22%, transparent); }
+  /* tabele: bez zawijania komórek, przewijane w bok */
+  .nowrap-table th, .nowrap-table td { white-space: nowrap; padding-inline: 0.7rem; }
+  .nowrap-table th { text-align: start; font-size: 0.8rem; color: var(--ink-muted); font-weight: 600; }
+  .nowrap-table td.num { text-align: end; }
+  /* czołówka rankingu świata: zwarty układ */
+  .rank-table { table-layout: auto; }
+  .rank-table .nm-name { font-weight: 500; }
+  .rank-table .nat { font-size: 0.72rem; letter-spacing: 0.06em; }
+  .rank-table .bd .bd-ico { display: none; }
+  @media (max-width: 40rem) {
+    .panel table.rank-table { display: table; table-layout: fixed; inline-size: 100%; }
+    .rank-table .rk { inline-size: 1.8rem; padding-inline: 0.3rem; }
+    .rank-table .rt { inline-size: 3.4rem; padding-inline: 0.3rem; }
+    .rank-table .bd { inline-size: 2.3rem; padding-inline: 0.2rem; text-align: center; }
+    .rank-table .ti { display: none; }
+    .rank-table .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-inline: 0.4rem; }
+    .rank-table .bd .bd-txt { display: none; }
+    .rank-table .bd .tag.norm .bd-ico { display: inline; }
+    .rank-table .bd .tag { padding: 0.15rem 0.35rem; }
+  }
   /* formularz przygotowania */
   .setup { display: grid; gap: 0.9rem; }
   .sf-top { display: flex; gap: 1rem; align-items: flex-start; flex-wrap: wrap; }
