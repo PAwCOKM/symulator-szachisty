@@ -95,6 +95,39 @@ function Info() {
   );
 }
 
+/** Okno z kodem konta pokazywane od razu po wysłaniu wyniku do rankingu: kod widać domyślnie i można go skopiować. */
+export function AccountCodeNotice() {
+  const [code, setCode] = useState<string | null | undefined>(undefined);
+  const [copied, setCopied] = useState<'ok' | 'fail' | null>(null);
+  useEffect(() => {
+    void myAccountCode().then(setCode);
+  }, []);
+  if (!code) return null;
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(formatCode(code));
+      setCopied('ok');
+    } catch {
+      setCopied('fail');
+    }
+  };
+  return (
+    <div className="acct notice" role="region" aria-label="Kod konta w rankingu">
+      <h4>Zapisz swój kod konta</h4>
+      <p>
+        Twój wynik jest w rankingu pod anonimowym kontem. Ten kod pozwala usunąć konto i wyniki z serwera, także z innej przeglądarki albo po wyczyszczeniu danych strony:
+      </p>
+      <p>
+        <code className="acct-code">{formatCode(code)}</code>{' '}
+        <button type="button" className="ghost small" onClick={copy}>Kopiuj kod</button>
+      </p>
+      {copied === 'ok' && <p role="status" className="good">Skopiowano kod do schowka.</p>}
+      {copied === 'fail' && <p role="status" className="bad">Nie udało się skopiować. Zaznacz kod i skopiuj go ręcznie.</p>}
+      <p className="muted">Nie udostępniaj go: każdy, kto zna kod, może usunąć te wyniki. Znajdziesz go też w Polityce prywatności.</p>
+    </div>
+  );
+}
+
 /** Kod konta (16 znaków): pozwala usunąć konto i wyniki z innej przeglądarki albo po wyczyszczeniu danych. */
 function AccountCode() {
   const [code, setCode] = useState<string | null | undefined>(undefined);

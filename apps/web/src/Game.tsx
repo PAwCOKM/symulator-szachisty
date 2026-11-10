@@ -42,6 +42,7 @@ import { Stats } from './Stats';
 import { downloadSummary } from './careerStats';
 import { downloadPdf } from './pdfExport';
 import { World } from './World';
+import { AccountCodeNotice } from './Legal';
 import { useGame } from './store';
 import { FormatIcon, FormatTag, Icon, Meter, Piece, XScroll, type IconName } from './ui';
 
@@ -319,6 +320,7 @@ function Ended({ s, onFinished }: { s: CareerState; onFinished: () => void }) {
         Max ranking <b>{s.player.peak}</b> · {CATEGORY_BY_ID[s.player.category]!.name} · wygrane turnieje {s.stats.tournamentsWon} · wynik <b>{careerScore(s)}</b> <span className="muted">(start: {startDef(s.config.start).name}, mnożnik ×{startDef(s.config.start).mult.toFixed(1).replace('.', ',')})</span>
       </p>
       <p role="status" className={msg ? (msg.ok ? 'good' : 'bad') : 'muted'}>{msg ? msg.text : 'Wysyłanie wyniku do rankingu…'}</p>
+      {msg?.ok && online && <AccountCodeNotice />}
       {msg && !msg.ok && online && !submitted && <p><button className="ghost" onClick={send}>Wyślij ponownie</button></p>}
       <div className="row">
         <button className="ghost" onClick={() => downloadSummary(s)}>Pobierz podsumowanie kariery (HTML)</button>
