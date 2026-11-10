@@ -59,3 +59,12 @@ export function FormatTag({ f }: { f: Format }) {
 export function FormatIcon({ f }: { f: Format }) {
   return <Icon name={f === 'classical' ? 'clock' : f === 'rapid' ? 'timer' : 'zap'} />;
 }
+
+/** Tabela przewijana w poziomie: kontener jest fokusowalny, więc przewija się też klawiaturą. */
+export function XScroll({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="xscroll" tabIndex={0} role="region" aria-label={label}>
+      {children}
+    </div>
+  );
+}

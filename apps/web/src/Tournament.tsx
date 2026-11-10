@@ -12,7 +12,7 @@ import {
   type Setup,
 } from '@chess/engine';
 import { SetupForm } from './SetupForm';
-import { Icon, Piece } from './ui';
+import { Icon, Piece, XScroll } from './ui';
 import { useGame } from './store';
 
 export function Tournament({ s }: { s: CareerState }) {
@@ -199,6 +199,7 @@ function Games({ s }: { s: CareerState }) {
   return (
     <div className="panel">
       <h3>Dotychczasowe partie</h3>
+<XScroll label="Dotychczasowe partie">
       <table>
         <tbody>
           {run.games.map((g) => (
@@ -213,6 +214,7 @@ function Games({ s }: { s: CareerState }) {
           ))}
         </tbody>
       </table>
+      </XScroll>
     </div>
   );
 }

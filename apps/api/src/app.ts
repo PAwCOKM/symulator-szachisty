@@ -6,7 +6,8 @@ import { careerScore, ENGINE_VERSION, EngineError, replay, type Action } from '@
 import { Store } from './store';
 
 const configSchema = z.object({
-  name: z.string().min(1).max(24),
+  // imię postaci jest widoczne publicznie: bez adresów e-mail i odnośników
+  name: z.string().min(1).max(24).refine((n) => !/@|https?:|www\./i.test(n), 'name_not_allowed'),
   archetype: z.enum(['tactician', 'positional', 'allround']),
   gender: z.enum(['m', 'f']).optional(),
   start: z.string().max(24).optional(),
@@ -36,6 +37,22 @@ export function buildApp(store: Store) {
     store.data.players[id] = { id, tokenHash: sha(token), createdAt: Date.now() };
     store.save();
     return { playerId: id, token };
+  });
+
+  // prawo do usunięcia danych: kasuje anonimowe konto i wszystkie jego kariery
+  app.delete('/v1/me', async (req, reply) => {
+    const p = auth(req);
+    if (!p) return reply.code(401).send({ error: 'unauthorized' });
+    let n = 0;
+    for (const [id, c] of Object.entries(store.data.careers)) {
+      if (c.playerId === p.id) {
+        delete store.data.careers[id];
+        n++;
+      }
+    }
+    delete store.data.players[p.id];
+    store.save();
+    return { deleted: n };
   });
 
   // start kariery: serwer wydaje seed

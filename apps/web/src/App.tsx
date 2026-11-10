@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { CATEGORY_BY_ID, CITIES, DEFAULT_START, STARTS, ageOf, startDef } from '@chess/engine';
-import { Icon } from './ui';
+import { Icon, XScroll } from './ui';
 import { WHITE_CARDS, retireIfNeeded } from './helpers';
 import { board, startOnline, type BoardPeriod, type BoardRow } from './api';
 import { Game } from './Game';
-import { Footer, Legal } from './Legal';
+import { Footer, Legal, type LegalSection } from './Legal';
 import { flushPending, slotInfos, useGame, wipeSlot, type SlotInfo } from './store';
 
 type Screen = 'home' | 'new' | 'game' | 'boards' | 'legal';
@@ -16,8 +16,10 @@ export function App() {
   const [infos, setInfos] = useState<SlotInfo[]>(() => slotInfos());
   const refresh = () => setInfos(slotInfos());
   const [legalFrom, setLegalFrom] = useState<Screen>('home');
-  const openLegal = () => {
+  const [legalSection, setLegalSection] = useState<LegalSection>('info');
+  const openLegal = (section: LegalSection = 'info') => {
     if (screen !== 'legal') setLegalFrom(screen);
+    setLegalSection(section);
     setScreen('legal');
   };
   const [flushed, setFlushed] = useState(0);
@@ -36,11 +38,11 @@ export function App() {
         {!career.ended && ageOf(career) >= 20 && <p className="muted"><button className="ghost" onClick={() => confirm('Zakończyć karierę?') && dispatch({ type: 'retire' })}>Zakończ karierę</button></p>}
       </Shell>
     );
-  if (screen === 'legal') return <Shell onLegal={openLegal}><Legal onBack={() => (legalFrom === 'game' && !career ? home() : setScreen(legalFrom))} /></Shell>;
-  if (screen === 'new') return <Shell onLegal={openLegal}><NewCareer slot={newSlot} onDone={() => setScreen('game')} onBack={home} /></Shell>;
+  if (screen === 'legal') return <Shell onLegal={openLegal}><Legal key={legalSection} initial={legalSection} onBack={() => (legalFrom === 'game' && !career ? home() : setScreen(legalFrom))} /></Shell>;
+  if (screen === 'new') return <Shell onLegal={openLegal}><NewCareer slot={newSlot} onDone={() => setScreen('game')} onBack={home} onLegal={openLegal} /></Shell>;
   if (screen === 'boards') return <Shell onLegal={openLegal}><Boards onBack={home} /></Shell>;
   return (
-    <Shell onLegal={openLegal}>
+    <Shell onLegal={openLegal} title={false}>
       <div className="panel hero">
         <h1><Icon name="pawn" /> Kariera Szachisty</h1>
         {flushed > 0 && <p role="status" className="good">Dosłano do rankingu zaległe wyniki: {flushed}.</p>}
@@ -107,16 +109,20 @@ export function App() {
   );
 }
 
-function Shell({ children, onLegal }: { children: React.ReactNode; onLegal: () => void }) {
+function Shell({ children, onLegal, title = true }: { children: React.ReactNode; onLegal: (s?: LegalSection) => void; title?: boolean }) {
   return (
     <div className="app">
-      {children}
+      <main>
+        {title && <h1 className="sr-only">Kariera Szachisty</h1>}
+        {children}
+      </main>
       <Footer onLegal={onLegal} />
     </div>
   );
 }
 
-function NewCareer({ slot, onDone, onBack }: { slot: number; onDone: () => void; onBack: () => void }) {
+function NewCareer({ slot, onDone, onBack, onLegal }: { slot: number; onDone: () => void; onBack: () => void; onLegal: (s?: LegalSection) => void }) {
+  const [ranked, setRanked] = useState(true);
   const start = useGame((x) => x.start);
   const [name, setName] = useState('Nowy Szachista');
   const [arch, setArch] = useState<'tactician' | 'positional' | 'allround'>('allround');
@@ -127,9 +133,11 @@ function NewCareer({ slot, onDone, onBack }: { slot: number; onDone: () => void;
   const [busy, setBusy] = useState(false);
   const startId = startPick;
   const sd = startDef(startPick);
+  const nameError = /@|https?:|www\./i.test(name) ? 'Imię postaci jest widoczne publicznie: nie używaj adresów e-mail ani odnośników.' : '';
   const go = async () => {
+    if (nameError) return;
     setBusy(true);
-    const on = await startOnline();
+    const on = ranked ? await startOnline() : null;
     const seed = on?.seed ?? Math.random().toString(36).slice(2) + Date.now().toString(36);
     start(slot, { name: name.trim() || 'Szachista', gender, start: startId, ...(city ? { city } : {}), archetype: arch, startWhite: white }, seed, on?.online ?? null);
     onDone();
@@ -189,6 +197,19 @@ function NewCareer({ slot, onDone, onBack }: { slot: number; onDone: () => void;
         ))}
       </fieldset>
       <p className="muted">Zaczynasz w wieku {sd.startAge ?? 8} lat jako początkujący (pierwszy ranking po 5 partiach). Jeśli API działa, seed i ranking są online; inaczej gra offline.</p>
+      <fieldset className="consent">
+        <legend>Ranking online</legend>
+        <label className="check">
+          <input type="checkbox" checked={ranked} onChange={(e) => setRanked(e.target.checked)} />
+          <span>Zapisz wynik tej kariery w rankingu online</span>
+        </label>
+        <p className="muted">
+          Po zakończeniu kariery na serwer trafi imię postaci (widoczne publicznie w rankingu), wynik i parametry startowe, pod anonimowym kontem. Nie wpisuj danych osobowych.
+          Odznacz, aby grać offline: nic nie zostanie wysłane. Szczegóły: <button type="button" className="linklike" onClick={() => onLegal('privacy')}>Polityka prywatności</button> i{' '}
+          <button type="button" className="linklike" onClick={() => onLegal('terms')}>Regulamin</button>.
+        </p>
+      </fieldset>
+      {nameError && <p role="alert" className="bad">{nameError}</p>}
       <button disabled={busy} onClick={go}>Zaczynamy</button> <button className="ghost" onClick={onBack}>Wstecz</button>
     </div>
   );
@@ -202,13 +223,15 @@ function BoardPanel({ title, period, limit }: { title: string; period: BoardPeri
   }, [period]);
   return (
     <div className="panel">
-      <h3>{title}</h3>
+      <h2>{title}</h2>
       {err && <p className="bad">Brak połączenia z API (uruchom: npm run dev:api).</p>}
       {rows && rows.length === 0 && <p className="muted">Nikt jeszcze nie skończył kariery w tym okresie.</p>}
       {rows && rows.length > 0 && (
+        <XScroll label={`Tabela: ${title}`}>
         <table><tbody>
           {rows.slice(0, limit ?? 50).map((r) => <tr key={r.rank}><td>{r.rank}</td><td>{r.name}</td><td className="muted">max {r.peak}</td><td><b>{r.score}</b> pkt</td></tr>)}
         </tbody></table>
+        </XScroll>
       )}
     </div>
   );

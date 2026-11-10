@@ -58,3 +58,4 @@ Wersje silnika gry (`ENGINE_VERSION`). Przy każdej zmianie zawartości lub stan
 ## Poza silnikiem
 - Responsywny układ na telefony (przewijane zakładki, tabele przewijane w bok), przebudowane karty zapisów, formularz przygotowania i kalendarz turniejów (sortowanie i filtr po średnim elo), karta rywala, prawdziwy PDF z podsumowaniem kariery, kolejka zaległych wyników rankingu.
 - Stopka z informacją, że gra jest nieoficjalna, a gracze fikcyjni, oraz strona „Informacje prawne i prywatność”.
+- Prywatność i dostępność: czcionki serwowane lokalnie (bez Google Fonts), strony Polityka prywatności, Regulamin, Cookies i Licencje, dobrowolny udział w rankingu online, usuwanie konta i wyników z serwera (`DELETE /v1/me`), walidacja imienia postaci (bez e-maili i linków), etykiety dla pasków i przewijanych tabel, jeden element `main` i ukryty nagłówek h1, poprawiony kontrast w jasnym motywie.

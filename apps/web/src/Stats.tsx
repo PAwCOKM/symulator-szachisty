@@ -55,7 +55,7 @@ export function Stats({ s }: { s: CareerState }) {
 
       <div className="panel">
         <h3>Rok po roku</h3>
-        <div className="scroll">
+        <div className="scroll" tabIndex={0} role="region" aria-label="Tabela: rok po roku">
           <table className="nowrap-table">
             <thead><tr><th>Rok</th><th>Wiek</th><th>Klasyczny</th><th>Szybki</th><th>Błysk.</th><th>Turnieje</th><th>Wygrane</th><th>Najlepsze m.</th><th>Nagrody</th></tr></thead>
             <tbody>
@@ -70,7 +70,7 @@ export function Stats({ s }: { s: CareerState }) {
       <div className="panel">
         <h3><Icon name="book" /> Debiuty w praktyce</h3>
         {openings.length === 0 ? <p className="muted">Jeszcze nie zagrałeś partii.</p> : (
-          <div className="scroll">
+          <div className="scroll" tabIndex={0} role="region" aria-label="Tabela: debiuty w praktyce">
             <table className="nowrap-table">
               <thead><tr><th>Debiut</th><th>Partie</th><th>W-R-P</th><th>Punkty</th><th>Znajomość</th></tr></thead>
               <tbody>

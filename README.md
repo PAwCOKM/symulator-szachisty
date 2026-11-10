@@ -116,7 +116,7 @@ Aby zagrać na telefonie w tej samej sieci Wi-Fi, uruchom `npm run dev -- --host
 ## Zasady gry w skrócie
 
 - **Rating** liczony wg Elo: K=40 dla nowych i juniorów, 20 dorośli, 10 powyżej 2400; dolny próg 1000. Osobne rankingi: klasyczny, szybki i błyskawiczny (kategorie i tytuły z klasycznego). Pierwszy ranking w danym tempie powstaje po 5 partiach.
-- **Kategorie polskie** (V…M) wg Regulaminu Klasyfikacyjnego PZSzach: norma to wynik rankingowy w turnieju ≥ Rmin (V 1050, IV 1300, III 1550, II 1800, I 2000, K 2200, M 2400), min. 5/5/7/7/9/9/9 partii i 1/3 punktów. II–V to jedna norma, I/K/M wielokrotne; K wymaga rankingu 2100, M 2300 i turnieju międzynarodowego. **Tytuły FIDE**: CM/FM z rankingu 2200/2300, IM/GM = ranking + 3 normy FIDE. To dwie osobne ścieżki: tytuł FIDE nie blokuje norm polskich.
+- **Kategorie polskie** (V…M) wzorowane na polskim regulaminie klasyfikacyjnym (uproszczone, nieoficjalne): norma to wynik rankingowy w turnieju ≥ Rmin (V 1050, IV 1300, III 1550, II 1800, I 2000, K 2200, M 2400), min. 5/5/7/7/9/9/9 partii i 1/3 punktów. II–V to jedna norma, I/K/M wielokrotne; K wymaga rankingu 2100, M 2300 i turnieju międzynarodowego. **Tytuły FIDE**: CM/FM z rankingu 2200/2300, IM/GM = ranking + 3 normy FIDE. To dwie osobne ścieżki: tytuł FIDE nie blokuje norm polskich.
 - **Droga do korony:** Puchar Świata (lata nieparzyste gry, top 3 = awans) → Turniej Pretendentów (lata parzyste; awans z Pucharu albo top 8 rankingu; 8 osób, 14 rund) → mecz o mistrzostwo świata (14 partii + dogrywka). Kobiety mają własny cykl. Poza Twoim udziałem mecze rozstrzyga symulacja.
 - **Mistrzostwa Polski:** półfinały w kwietniu (miejsca 1–6 dają awans) i finał w czerwcu; do finału wchodzisz też z rankingiem 2400+.
 - **Rywale:** pula ponad 600 zawodników z narodowościami. W niższych kategoriach niemal sami Polacy, na szczycie głównie zagraniczni (2500+: ok. 10–13% Polaków). Turnieje krajowe gromadzą Polaków, międzynarodowe zawodników z całego świata. Ranking kobiet ma sufit 2580, mężczyzn 2900.
@@ -132,9 +132,20 @@ Aby zagrać na telefonie w tej samej sieci Wi-Fi, uruchom `npm run dev -- --host
 
 **Wszyscy gracze są fikcyjni.** Zawodnicy, trenerzy i kluby są generowani losowo; zbieżność z prawdziwymi osobami lub klubami jest przypadkowa.
 
-**Prywatność.** Zapisy gry leżą w przeglądarce (localStorage). Gra nie używa ciasteczek reklamowych ani analityki. Przy zakończeniu kariery na serwer rankingów trafia wpisane imię postaci (widoczne publicznie), wynik i log akcji do weryfikacji, pod losowym anonimowym identyfikatorem konta. Czcionki ładowane są z Google Fonts. Pełny tekst jest w grze (stopka, „Informacje prawne i prywatność").
+**Prywatność.** Zapisy gry leżą w przeglądarce (localStorage), gra nie używa ciasteczek, analityki, reklam ani zasobów stron trzecich (czcionki są serwowane lokalnie). Udział w rankingu online jest dobrowolny (pole przy tworzeniu kariery): po zakończeniu kariery na serwer trafia wpisane imię postaci (widoczne publicznie), wynik i parametry startowe, pod losowym anonimowym kontem. Zapis akcji służy tylko do weryfikacji wyniku i nie jest przechowywany. Użytkownik może usunąć swoje konto i wyniki z serwera przyciskiem w Polityce prywatności. W grze są strony: Informacje prawne, Polityka prywatności, Regulamin, Cookies i pamięć lokalna, Licencje.
 
 Gra jest udostępniana w stanie, w jakim jest, bez gwarancji.
+
+## Przed publicznym udostępnieniem
+
+Lista kontrolna (to nie jest porada prawna):
+
+- [ ] **Dane administratora.** Skopiuj `apps/web/.env.example` do `apps/web/.env.local` i uzupełnij `VITE_OPERATOR_NAME` oraz `VITE_CONTACT_EMAIL`. Bez nich strony prawne nie pokazują kontaktu, a polityka prywatności wymaga wskazania administratora i sposobu kontaktu.
+- [ ] **HTTPS i hosting.** Wystaw front (`npm run build`, katalog `apps/web/dist`) i API za HTTPS. Sprawdź, czy dostawca hostingu nie zbiera logów z adresami IP, i dopisz go do polityki prywatności, jeśli tak.
+- [ ] **Nazwy turniejów i sponsorów.** W grze są nazwy istniejących turniejów (m.in. Tata Steel, Norway Chess, Grenke, Superbet). Przy hostingu komercyjnym rozważ zamianę na własne, wymyślone nazwy.
+- [ ] **Licencja.** Repozytorium nie ma licencji (wszelkie prawa zastrzeżone). Dodaj ją przy upublicznieniu.
+- [ ] **Ochrona API.** API nie ma ograniczenia liczby zapytań ani moderacji imion w rankingu. Przy większym ruchu dodaj rate limiting, kopie zapasowe bazy (`apps/api/data/db.json` albo prawdziwa baza) i sposób zgłaszania nadużyć.
+- [ ] **Dostępność.** Ekrany zostały przeskanowane axe-core (WCAG 2.1 AA, jasny i ciemny motyw, komputer i telefon) bez błędów; pozostały jedynie uwagi o kolejności nagłówków.
 
 ## Dla programistów
 

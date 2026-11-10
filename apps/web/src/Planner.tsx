@@ -237,7 +237,7 @@ export function Planner({ s }: { s: CareerState }) {
           )}
           <details open={sum.results.length <= 12}>
             <summary>Wszystkie turnieje roku ({sum.results.length})</summary>
-            <div className="scroll">
+            <div className="scroll" tabIndex={0} role="region" aria-label="Tabela: wszystkie turnieje roku">
               <table>
                 <tbody>
                   {sum.results.map((h, i) => (

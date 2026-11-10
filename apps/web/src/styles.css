@@ -11,7 +11,7 @@
     --surface: #fffcf5;
     --surface-2: #f1ebdc;
     --ink: #1b2620;
-    --ink-muted: #5a665d;
+    --ink-muted: #4b574e;
     --line: #dcd3bd;
     --felt: #1f6b45;
     --on-felt: #ffffff;
@@ -27,7 +27,7 @@
     --shadow-2: 0 2px 4px rgb(27 38 32 / 0.08), 0 14px 32px rgb(27 38 32 / 0.1);
 
     /* Tier 2: semantyczne */
-    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-display: 'Fraunces Variable', 'Fraunces', Georgia, 'Times New Roman', serif;
     --font-body: 'Fira Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
     --font-num: 'Fira Code', ui-monospace, 'Cascadia Mono', Consolas, monospace;
     --radius: 0.875rem;
@@ -43,7 +43,7 @@
       --surface: light-dark(#fffcf5, #16221b);
       --surface-2: light-dark(#f1ebdc, #1c2b22);
       --ink: light-dark(#1b2620, #e9f0e8);
-      --ink-muted: light-dark(#5a665d, #9fb2a5);
+      --ink-muted: light-dark(#4b574e, #9fb2a5);
       --line: light-dark(#dcd3bd, #2b3d32);
       --felt: light-dark(#1f6b45, #52b680);
       --on-felt: light-dark(#ffffff, #06120a);
@@ -308,8 +308,6 @@
     .tabs::-webkit-scrollbar { display: none; }
     .tabs button { flex: none; scroll-snap-align: start; min-block-size: 2.5rem; padding-inline: 0.75rem; }
     .tabs .spacer { display: none; }
-    /* tabele przewijają się poziomo zamiast poszerzać stronę */
-    .panel table { display: block; max-inline-size: 100%; overflow-x: auto; }
     .hud-meters { gap: 0.4rem 1rem; }
     h2 { font-size: 1.3rem; }
   }
@@ -344,6 +342,7 @@
 }
 
 @layer components {
+  .boards-home h2 { font-size: 1.1rem; margin-block-end: 0.5rem; }
   .boards-home { display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); gap: 0.75rem; }
 }
 
@@ -364,6 +363,7 @@
   .phasecard.on { border-color: var(--felt); box-shadow: 0 0 0 1px var(--felt); background: color-mix(in srgb, var(--felt) 16%, var(--surface-2)); }
   .phasecard b { font-size: 1rem; }
   .pc-tags { display: grid; gap: 0.1rem; font-size: 0.8rem; color: var(--ink-muted); }
+  .phasecard.on .pc-tags { color: var(--ink); }
   .tslots { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 0.7rem; }
   .tslot { display: grid; align-content: start; gap: 0.5rem; padding: 0.75rem 0.9rem; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-2); }
   .tslot select { inline-size: 100%; }
@@ -391,6 +391,7 @@
   .chipbtn:hover { border-color: var(--felt); color: var(--ink); }
   .chipbtn.on { border-color: var(--felt); color: var(--ink); background: color-mix(in srgb, var(--felt) 22%, transparent); }
   /* tabele: bez zawijania komórek, przewijane w bok */
+  .xscroll { overflow-x: auto; max-inline-size: 100%; }
   .nowrap-table th, .nowrap-table td { white-space: nowrap; padding-inline: 0.7rem; }
   .nowrap-table th { text-align: start; font-size: 0.8rem; color: var(--ink-muted); font-weight: 600; }
   .nowrap-table td.num { text-align: end; }
@@ -418,6 +419,16 @@
   .legal h3 { margin-block: 1.2rem 0.4rem; }
   .legal p, .legal li { max-inline-size: 46rem; }
   .legal ul { padding-inline-start: 1.2rem; display: grid; gap: 0.4rem; }
+  .sr-only { position: absolute; inline-size: 1px; block-size: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+  /* strony prawne i zgoda */
+  .legal-nav { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-block: 0.6rem 0.4rem; }
+  .lf-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.2rem 0.6rem; }
+  .legal code { font-family: var(--font-num); font-size: 0.85em; }
+  .consent { margin-block: 1rem; padding: 0.8rem 1rem; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-2); }
+  .consent legend { padding-inline: 0.4rem; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted); }
+  .consent .check { display: flex; align-items: center; gap: 0.6rem; min-block-size: 2.5rem; cursor: pointer; }
+  .consent input[type='checkbox'] { inline-size: 1.25rem; block-size: 1.25rem; accent-color: var(--felt); }
+  .consent p { margin-block-start: 0.4rem; }
   /* formularz przygotowania */
   .setup { display: grid; gap: 0.9rem; }
   .sf-top { display: flex; gap: 1rem; align-items: flex-start; flex-wrap: wrap; }

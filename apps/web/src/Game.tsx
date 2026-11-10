@@ -43,7 +43,7 @@ import { downloadSummary } from './careerStats';
 import { downloadPdf } from './pdfExport';
 import { World } from './World';
 import { useGame } from './store';
-import { FormatIcon, FormatTag, Icon, Meter, Piece, type IconName } from './ui';
+import { FormatIcon, FormatTag, Icon, Meter, Piece, XScroll, type IconName } from './ui';
 
 type Tab = 'week' | 'rep' | 'me' | 'stats' | 'world' | 'log' | 'ach';
 
@@ -79,9 +79,9 @@ function Hud({ s }: { s: CareerState }) {
         </div>
       </div>
       <div className="hud-meters">
-        <span className="m">Zmęczenie <Meter value={P.fatigue} warnHigh /> {Math.round(P.fatigue)}</span>
+        <span className="m">Zmęczenie <Meter value={P.fatigue} warnHigh label="Zmęczenie" /> {Math.round(P.fatigue)}</span>
         <span className="m">Forma {P.form >= 0 ? '+' : ''}{P.form.toFixed(1)}</span>
-        <span className="m" title="Szkoła, studia i praca ograniczają czas na trening">Czas na szachy <Meter value={chessTimeFactor(s) * 100} /> {Math.round(chessTimeFactor(s) * 100)}%</span>
+        <span className="m" title="Szkoła, studia i praca ograniczają czas na trening">Czas na szachy <Meter value={chessTimeFactor(s) * 100} label="Czas na szachy" /> {Math.round(chessTimeFactor(s) * 100)}%</span>
         {coach && <span className="m">Trener: {coach.name}</span>}
         {!online && !s.ended && <span className="m bad" title="Kariera zaczęta bez połączenia z serwerem: jej wynik nie trafi do rankingu">Offline: bez rankingu</span>}
         {P.injury && s.week < P.injury.until && <span className="m bad" title={`${INJURY_INFO[P.injury.kind].desc} Wolniejsza nauka; poważna dolegliwość blokuje turnieje.`}>Dolegliwość: {P.injury.name} (jeszcze {P.injury.until - s.week} tyg.)</span>}
@@ -163,7 +163,7 @@ function CardView({ c, s, sel, onPick }: { c: Card; s: CareerState; sel: boolean
   return (
     <div className="card" role="button" tabIndex={0} aria-pressed={sel} onClick={onPick} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick(); } }}>
       <div className="top"><b>{c.name}</b> <span className="muted">{GROUP_LABELS[c.group]}</span></div>
-      <Meter value={mastery} wide />
+      <Meter value={mastery} wide label={`Znajomość: ${c.name}`} />
       <div className="muted">{masteryLabel(mastery)} ({Math.round(mastery)}) · partie {p?.games ?? 0} ({p ? `${p.wins}/${p.draws}/${p.losses}` : '-'})</div>
     </div>
   );
@@ -212,7 +212,7 @@ function Me({ s }: { s: CareerState }) {
         {SKILL_KEYS.map((k) => (
           <div key={k} title={SKILL_HINTS[k]}>
             <span className="lbl">{SKILL_LABELS[k]}</span>
-            <Meter value={P.skills[k]} max={SKILL_MAX} /> {P.skills[k].toFixed(1)}
+            <Meter value={P.skills[k]} max={SKILL_MAX} label={SKILL_LABELS[k]} /> {P.skills[k].toFixed(1)}
             {s.weak[k] ? <span className="bad"> (słabość ×{s.weak[k]})</span> : null}
           </div>
         ))}
@@ -245,7 +245,7 @@ function Me({ s }: { s: CareerState }) {
           );
         })()}
         {P.gender === 'f' && <div className="muted">Kobiety mogą grać w turniejach otwartych, ale tam rywale grają pełną siłą, a bramki wejścia liczą kategorie kobiece wg punktacji rankingowej.</div>}
-        <p className="muted">Progi i liczba partii wg Regulaminu Klasyfikacyjnego PZSzach. Kategorie II-V to jedna norma, centralne (I, K, M) - wielokrotna. Polskie kategorie i tytuły FIDE to dwie osobne ścieżki: tytuł nie blokuje zbierania norm na kandydata i mistrza krajowego. CM/FM wynikają z rankingu 2200/2300; IM/GM = ranking + 3 normy FIDE.</p>
+        <p className="muted">Progi i liczba partii są wzorowane na polskim regulaminie klasyfikacyjnym, ale uproszczone i nieoficjalne. Kategorie II-V to jedna norma, centralne (I, K, M) - wielokrotna. Polskie kategorie i tytuły FIDE to dwie osobne ścieżki: tytuł nie blokuje zbierania norm na kandydata i mistrza krajowego. CM/FM wynikają z rankingu 2200/2300; IM/GM = ranking + 3 normy FIDE.</p>
       </div>
       <div className="panel">
         <h3>Rankingi</h3>
@@ -256,6 +256,7 @@ function Me({ s }: { s: CareerState }) {
       </div>
       <div className="panel">
         <h3>Historia turniejów</h3>
+        <XScroll label="Historia turniejów">
         <table>
           <tbody>
             {[...s.history].reverse().slice(0, 30).map((h, i) => (
@@ -270,6 +271,7 @@ function Me({ s }: { s: CareerState }) {
             ))}
           </tbody>
         </table>
+        </XScroll>
       </div>
     </>
   );

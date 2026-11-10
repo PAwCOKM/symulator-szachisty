@@ -52,6 +52,24 @@ export async function startOnline(): Promise<{ seed: string; online: { careerId:
   }
 }
 
+/** Usuwa z serwera anonimowe konto tej przeglądarki i jego wyniki. Zwraca liczbę usuniętych karier albo null, gdy konta nie ma. */
+export async function deleteMyData(): Promise<number | null> {
+  const t = localStorage.getItem(TOKEN_KEY);
+  if (!t) return null;
+  try {
+    const r = await req<{ deleted: number }>('/v1/me', { method: 'DELETE', token: t });
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem('szachy-pending-results');
+    return r.deleted;
+  } catch (e) {
+    if (e instanceof Error && e.message.startsWith('401')) {
+      localStorage.removeItem(TOKEN_KEY);
+      return null;
+    }
+    throw e;
+  }
+}
+
 export interface FinishResult {
   verified: boolean;
   result: { peak: number; score: number; category: string };

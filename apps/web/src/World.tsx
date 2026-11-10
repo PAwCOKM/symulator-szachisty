@@ -70,7 +70,7 @@ function WorldSection({ s, women }: { s: CareerState; women: boolean }) {
 
       <div className="panel">
         <h3><Icon name="users" /> Czołówka rankingu {women ? 'kobiet' : 'światowego'} (klasyczne)</h3>
-        <div className="scroll">
+        <div className="scroll" tabIndex={0} role="region" aria-label="Tabela: czołówka rankingu">
           <table className="rank-table">
             <tbody>
               {v.rows.map((r) => (
