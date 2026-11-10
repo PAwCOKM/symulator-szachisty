@@ -6,6 +6,6 @@
 const env = (import.meta as unknown as { env?: Record<string, string | undefined> }).env ?? {};
 
 export const OPERATOR_NAME = env.VITE_OPERATOR_NAME?.trim() || 'Madyn';
-export const DISCORD_URL = env.VITE_DISCORD_URL?.trim() || 'https://discord.gg/Wp5vmfWWMB';
+export const DISCORD_URL = env.VITE_DISCORD_URL?.trim() || 'https://discord.gg/VEEPUxfXqz';
 export const CONTACT_EMAIL = env.VITE_CONTACT_EMAIL?.trim() || '';
 export const LAST_UPDATED = '10 listopada 2026';

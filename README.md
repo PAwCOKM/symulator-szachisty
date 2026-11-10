@@ -8,6 +8,8 @@ Debiuty są kartami: im częściej je grasz i trenujesz, tym lepiej je znasz. Ry
 | :---: | :---: | :---: |
 | ![Ekran główny](docs/screenshots/desktop-home.jpg) | ![Trening](docs/screenshots/desktop-trening.jpg) | ![Karta rywala](docs/screenshots/desktop-karta-rywala.jpg) |
 
+**Społeczność i testy:** dołącz do serwera Discord https://discord.gg/VEEPUxfXqz: zgłaszanie błędów, pomysły, ranking i rozmowy o grze.
+
 ## Spis treści
 
 - [Szybki start](#szybki-start)
