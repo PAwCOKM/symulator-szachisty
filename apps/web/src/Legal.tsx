@@ -143,7 +143,10 @@ function Privacy() {
         stron trzecich. Czcionki są serwowane lokalnie.
       </p>
       <h3>Jak długo przechowujemy dane</h3>
-      <p>Do czasu, gdy sam je usuniesz (przycisk poniżej) albo zażądasz usunięcia, oraz do czasu usunięcia wpisów naruszających regulamin.</p>
+      <p>
+        Do czasu, gdy sam je usuniesz (przycisk poniżej) albo zażądasz usunięcia, oraz do czasu usunięcia wpisów naruszających regulamin. Niedokończone kariery i nieużywane konta są usuwane po 60 dniach.
+        Serwer robi kopię zapasową bazy raz na dobę (jedną, podmienianą), więc usunięte dane znikają również z kopii najpóźniej po 24 godzinach.
+      </p>
       <h3>Twoje prawa</h3>
       <p>
         Masz prawo dostępu do danych, sprostowania, usunięcia, ograniczenia przetwarzania, sprzeciwu oraz wniesienia skargi do Prezesa Urzędu Ochrony

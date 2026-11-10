@@ -1,9 +1,10 @@
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import cors from '@fastify/cors';
+import rateLimit from '@fastify/rate-limit';
 import Fastify from 'fastify';
 import { z } from 'zod';
 import { careerScore, ENGINE_VERSION, EngineError, replay, type Action } from '@chess/engine';
-import { Store } from './store';
+import { MAX_ACTIVE_PER_PLAYER, Store } from './store';
 
 const configSchema = z.object({
   // imię postaci jest widoczne publicznie: bez adresów e-mail i odnośników
@@ -16,9 +17,24 @@ const configSchema = z.object({
 });
 const sha = (s: string) => createHash('sha256').update(s).digest('hex');
 
-export function buildApp(store: Store) {
-  const app = Fastify({ logger: false, bodyLimit: 2 * 1024 * 1024 });
-  void app.register(cors, { origin: true });
+export interface AppOptions {
+  /** dozwolone źródła CORS (puste = dowolne, wygodne w rozwoju); w produkcji ustaw adres strony */
+  corsOrigins?: string[];
+  /** za reverse proxy (nginx, Caddy, hosting): prawdziwy adres klienta z nagłówków */
+  trustProxy?: boolean;
+  /** limity zapytań na adres IP w ciągu minuty */
+  limits?: { global: number; account: number; career: number; finish: number; erase: number };
+}
+
+const DEFAULT_LIMITS = { global: 120, account: 10, career: 20, finish: 10, erase: 5 };
+
+export async function buildApp(store: Store, opts: AppOptions = {}) {
+  const limits = { ...DEFAULT_LIMITS, ...opts.limits };
+  const app = Fastify({ logger: false, bodyLimit: 2 * 1024 * 1024, trustProxy: opts.trustProxy ?? false });
+  await app.register(cors, { origin: opts.corsOrigins?.length ? opts.corsOrigins : true });
+  // ochrona przed zalewaniem serwera: ogólny limit na IP, ostrzejsze dla tworzenia kont, karier, wysyłania wyników i usuwania
+  await app.register(rateLimit, { global: true, max: limits.global, timeWindow: '1 minute' });
+  const limit = (max: number) => ({ config: { rateLimit: { max, timeWindow: '1 minute' } } });
 
   const auth = (req: { headers: Record<string, unknown> }) => {
     const h = String(req.headers.authorization ?? '');
@@ -31,7 +47,7 @@ export function buildApp(store: Store) {
   app.get('/health', async () => ({ ok: true, engineVersion: ENGINE_VERSION }));
 
   // konto anonimowe: tylko losowy token, w bazie trzymamy jego hash
-  app.post('/v1/auth/anonymous', async () => {
+  app.post('/v1/auth/anonymous', limit(limits.account), async () => {
     const token = randomBytes(32).toString('hex');
     const id = randomUUID();
     store.data.players[id] = { id, tokenHash: sha(token), createdAt: Date.now() };
@@ -40,7 +56,7 @@ export function buildApp(store: Store) {
   });
 
   // prawo do usunięcia danych: kasuje anonimowe konto i wszystkie jego kariery
-  app.delete('/v1/me', async (req, reply) => {
+  app.delete('/v1/me', limit(limits.erase), async (req, reply) => {
     const p = auth(req);
     if (!p) return reply.code(401).send({ error: 'unauthorized' });
     let n = 0;
@@ -56,9 +72,12 @@ export function buildApp(store: Store) {
   });
 
   // start kariery: serwer wydaje seed
-  app.post('/v1/careers', async (req, reply) => {
+  app.post('/v1/careers', limit(limits.career), async (req, reply) => {
     const p = auth(req);
     if (!p) return reply.code(401).send({ error: 'unauthorized' });
+    // porzucone kariery nie rosną w nieskończoność: przy limicie usuwamy najstarsze niedokończone
+    const active = Object.values(store.data.careers).filter((c) => c.playerId === p.id && c.status === 'ACTIVE').sort((a, b) => a.startedAt - b.startedAt);
+    for (const old of active.slice(0, Math.max(0, active.length - MAX_ACTIVE_PER_PLAYER + 1))) delete store.data.careers[old.id];
     const id = randomUUID();
     const seed = randomBytes(12).toString('hex');
     store.data.careers[id] = { id, playerId: p.id, seed, status: 'ACTIVE', startedAt: Date.now() };
@@ -67,7 +86,7 @@ export function buildApp(store: Store) {
   });
 
   // zakończenie: serwer odtwarza karierę z seeda i logu akcji (replay), nie ufa wynikowi klienta
-  app.post('/v1/careers/:id/finish', async (req, reply) => {
+  app.post('/v1/careers/:id/finish', limit(limits.finish), async (req, reply) => {
     const p = auth(req);
     if (!p) return reply.code(401).send({ error: 'unauthorized' });
     const { id } = req.params as { id: string };

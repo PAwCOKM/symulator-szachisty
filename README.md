@@ -140,11 +140,13 @@ Gra jest udostępniana w stanie, w jakim jest, bez gwarancji.
 
 Lista kontrolna (to nie jest porada prawna):
 
-- [ ] **Kontakt.** Administrator to nick Madyn, kontakt przez Discord. Wpisz link zaproszenia w `apps/web/.env.local` (`VITE_DISCORD_URL=...`, wzór w `apps/web/.env.example`), żeby strony prawne miały klikalny odnośnik.
+- [x] **Kontakt.** Administrator: nick Madyn, kontakt przez Discord (link jest w `apps/web/src/legalConfig.ts`, można go nadpisać zmienną `VITE_DISCORD_URL`).
 - [ ] **HTTPS i hosting.** Wystaw front (`npm run build`, katalog `apps/web/dist`) i API za HTTPS. Sprawdź, czy dostawca hostingu nie zbiera logów z adresami IP, i dopisz go do polityki prywatności, jeśli tak.
 - [x] **Nazwy turniejów i sponsorów.** Nazwy istniejących imprez z nazwami sponsorów (np. Tata Steel, Norway Chess, Grenke, Superbet, Sinquefield) zostały zastąpione wymyślonymi.
-- [ ] **Licencja.** Repozytorium nie ma licencji (wszelkie prawa zastrzeżone). Dodaj ją przy upublicznieniu.
-- [ ] **Ochrona API.** API nie ma ograniczenia liczby zapytań ani moderacji imion w rankingu. Przy większym ruchu dodaj rate limiting, kopie zapasowe bazy (`apps/api/data/db.json` albo prawdziwa baza) i sposób zgłaszania nadużyć.
+- [x] **Licencja.** Repozytorium jest bez licencji (wszelkie prawa zastrzeżone) i, dopóki jest tymczasowo udostępnione testerom, tak ma zostać. Testerzy mogą uruchomić grę i zgłaszać błędy, ale nie mają praw do kopiowania i rozpowszechniania kodu.
+- [x] **Ochrona API.** Limity zapytań na adres IP (120 na minutę ogółem, 10 na minutę dla zakładania kont i wysyłania wyników, 20 dla startu kariery, 5 dla usuwania), limit 50 niedokończonych karier na konto i porządki w bazie. Za reverse proxy ustaw `TRUST_PROXY=1`, a w produkcji `CORS_ORIGIN=https://twoja-domena.pl`.
+- [x] **Kopia zapasowa.** Serwer sam robi jedną kopię `db.json.bak` raz na 24 godziny (podmieniana) i przy uszkodzeniu bazy wczytuje ją automatycznie. Przy utracie bazy tracimy najwyżej dobę rankingu. Dla pewności trzymaj kopię `db.json.bak` także poza serwerem.
+- [ ] **Moderacja.** Imiona w rankingu nie są filtrowane pod kątem wulgaryzmów. Zgłoszenia przychodzą przez Discord; wpis można usunąć ręcznie z bazy.
 - [ ] **Dostępność.** Ekrany zostały przeskanowane axe-core (WCAG 2.1 AA, jasny i ciemny motyw, komputer i telefon) bez błędów; pozostały jedynie uwagi o kolejności nagłówków.
 
 ## Dla programistów
@@ -176,7 +178,7 @@ npx tsx packages/engine/scripts/pool-check.ts   # rozkład rankingów w puli ryw
 
 - Silnik jest **czysty i deterministyczny**: stan jest serializowalny, a cała kariera to seed + lista akcji. Dzięki temu serwer może ją odtworzyć (`replay`) i zweryfikować wynik.
 - `ENGINE_VERSION` (w `packages/engine/src/model.ts`) rośnie przy każdej zmianie zawartości lub stanu gry; zapisy ze starszych wersji są odrzucane przez front i API.
-- API: `POST /v1/auth/anonymous`, `POST /v1/careers`, `POST /v1/careers/:id/finish`, `GET /v1/boards/:board?period=day|week|all`, `GET /health`. Zmienne: `PORT` (domyślnie 8787), `DB_FILE` (domyślnie `apps/api/data/db.json`, plik jest w `.gitignore`).
+- API: `POST /v1/auth/anonymous`, `POST /v1/careers`, `POST /v1/careers/:id/finish`, `GET /v1/boards/:board?period=day|week|all`, `GET /health`. Zmienne: `PORT` (domyślnie 8787), `DB_FILE` (domyślnie `apps/api/data/db.json`, plik jest w `.gitignore`), `CORS_ORIGIN`, `TRUST_PROXY`. Testy API: `apps/api/test`.
 - Front trzyma zapisy w `localStorage` pod kluczami `szachy-save-v2-slot{n}`; kolejka zaległych wyników pod `szachy-pending-results`.
 
 ## Rozwiązywanie problemów
