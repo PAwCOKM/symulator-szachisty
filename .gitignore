@@ -1,0 +1,19 @@
+node_modules/
+dist/
+build/
+coverage/
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.tsbuildinfo
+apps/api/prisma/*.db
+.claude/
+
+# baza serwera rankingów (hasze tokenów kont)
+apps/api/data/
