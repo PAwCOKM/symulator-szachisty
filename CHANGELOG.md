@@ -63,3 +63,7 @@ Wersje silnika gry (`ENGINE_VERSION`). Przy każdej zmianie zawartości lub stan
 - API: limity zapytań na IP (`@fastify/rate-limit`), limit niedokończonych karier na konto, codzienna kopia zapasowa bazy (jedna, podmieniana) z automatycznym odzyskiwaniem po uszkodzeniu pliku, porządki po 60 dniach, `CORS_ORIGIN` i `TRUST_PROXY`. Link do Discorda w stronach prawnych.
 - Konto rankingu ma 16-znakowy kod (XXXX-XXXX-XXXX-XXXX, bez znaków łatwych do pomylenia, ok. 79 bitów losowości): widoczny w Polityce prywatności, pozwala użyć konta w innej przeglądarce albo je usunąć po wyczyszczeniu danych. Stare, długie tokeny działają i są przy okazji wymieniane na kod.
 - Kod konta pokazuje się automatycznie po wysłaniu wyniku do rankingu (widoczny, z przyciskiem „Kopiuj kod”), nie tylko w Polityce prywatności.
+
+## Wersja 28
+- Miejsca w długich turniejach (rapid 13 rund, blitz 17 rund, open): zwycięzca traci więcej punktów, im więcej rund (ok. 10-11 z 13 i 13-14 z 17), więc 12/13 w mistrzostwach świata w rapidzie daje zwykle 1. miejsce, a 13,5/17 w blitzu miejsce w czołówce. Wcześniej w długich turniejach wielu rywali dobijało do wyników bliskich kompletowi.
+- Preset „Optymalnie pod ranking” nie pomija już elity przy bardzo wysokim rankingu (cel ograniczony do ok. 2820) i zawsze dodaje drogę do korony (Puchar Świata, Turniej Pretendentów, mecz o tytuł), jeśli możesz w niej wystartować.

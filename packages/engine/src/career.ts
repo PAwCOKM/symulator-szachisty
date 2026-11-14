@@ -1026,14 +1026,22 @@ export function simulatePlace(rng: Rng, fieldSize: number, rounds: number, level
   const total = (fieldSize * rounds) / 2 - score;
   const shift = (total - raw.reduce((a, b) => a + b, 0)) / others;
   const vals = raw.map((x) => clamp(Math.round(2 * (x + shift)) / 2, 0, rounds)).sort((a, b) => b - a);
-  // Lider (jeśli to nie Ty): komplet rzadko (8%), najczęściej 6,5 z 7 (47%), potem 6 (35%), czasem 5,5 (10%)
+  // Lider (jeśli to nie Ty). Krótkie turnieje (do 7 rund): komplet rzadko (8%), najczęściej 6,5 z 7 (47%), potem 6 (35%), czasem 5,5 (10%).
+  // Im więcej rund, tym więcej punktów traci zwycięzca: ok. 10-11 z 13 i ok. 13-14 z 17 (komplet w długim turnieju praktycznie się nie zdarza).
   const u = rng.float();
-  const leaderCap = rounds - (u < 0.08 ? 0 : u < 0.55 ? 0.5 : u < 0.9 ? 1 : 1.5);
+  let lost: number;
+  if (rounds <= 7) lost = u < 0.08 ? 0 : u < 0.55 ? 0.5 : u < 0.9 ? 1 : 1.5;
+  else {
+    const mean = 0.735 * Math.pow(rounds / 7, 1.7);
+    lost = clamp(Math.round(2 * rng.normal(mean, 0.2 + 0.04 * rounds)) / 2, 0.5, rounds);
+  }
+  const leaderCap = rounds - lost;
   let better = 0;
   let ties = 0;
   vals.forEach((v0, i) => {
     const rank = v0 > score ? i + 1 : i + 2;
-    const cap = rank === 1 ? leaderCap : Math.min(leaderCap <= rounds - 1 ? leaderCap - 0.5 : leaderCap, rounds - 0.5 * (1 + Math.ceil(Math.log2(rank))));
+    const drop = 0.5 * Math.ceil(Math.log2(Math.max(2, rank)));
+    const cap = rank === 1 ? leaderCap : Math.min(leaderCap - drop, rounds - drop - 0.5);
     const v = Math.min(v0, cap);
     if (v > score) better++;
     else if (v === score) ties++;

@@ -1,4 +1,4 @@
-export const ENGINE_VERSION = 27;
+export const ENGINE_VERSION = 28;
 
 /** Maksimum statystyki (0-100). Skala dawnych 112 pkt została przeliczona proporcjonalnie. */
 export const SKILL_MAX = 100;

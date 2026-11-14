@@ -506,3 +506,17 @@ describe('categories', () => {
     expect(categoryStatus(s).find((r) => r.id === 'm')!.achieved).toBe(false);
   });
 });
+
+describe('long tournaments', () => {
+  it('a very high score in a long open event wins it, and the winner of a 17-round blitz does not score near-perfect', () => {
+    const rng = Rng.fromSeed('long-place');
+    let win12of13 = 0;
+    let top5of135 = 0;
+    for (let i = 0; i < 400; i++) {
+      if (simulatePlace(rng, 160, 13, 2600, 200, 12) === 1) win12of13++;
+      if (simulatePlace(rng, 160, 17, 2620, 200, 13.5) <= 5) top5of135++;
+    }
+    expect(win12of13 / 400).toBeGreaterThan(0.9);
+    expect(top5of135 / 400).toBeGreaterThan(0.75);
+  });
+});

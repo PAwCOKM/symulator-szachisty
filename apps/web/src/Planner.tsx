@@ -139,7 +139,11 @@ export function Planner({ s }: { s: CareerState }) {
     }
     if (kind === 'ranking') {
       const score = (x: (typeof sched)[number]) => {
-        const fit = 1 - Math.min(1, Math.abs(x.def.level - (ratingOfFmt(x.def.format) + 80)) / 350);
+        // droga do korony (Puchar Świata, Turniej Pretendentów, mecz o tytuł) zawsze na liście, jeśli możesz w niej wystartować
+        if (x.def.special) return 1000;
+        // najsilniejsze turnieje mają średnią ok. 2700-2800, więc cel dla wyżej notowanych jest ograniczony od góry
+        const target = Math.min(ratingOfFmt(x.def.format) + 80, 2820);
+        const fit = 1 - Math.min(1, Math.abs(x.def.level - target) / 350);
         const fmtW = x.def.format === 'classical' ? 1.25 : x.def.format === 'rapid' ? 1 : 0.8;
         return fit < 0.15 ? 0 : x.def.rounds * fit * fmtW * (x.def.major ? 1.2 : 1);
       };
