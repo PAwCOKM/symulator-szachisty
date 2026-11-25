@@ -138,18 +138,6 @@ Aby zagrać na telefonie w tej samej sieci Wi-Fi, uruchom `npm run dev -- --host
 
 Gra jest udostępniana w stanie, w jakim jest, bez gwarancji.
 
-## Przed publicznym udostępnieniem
-
-Lista kontrolna (to nie jest porada prawna):
-
-- [x] **Kontakt.** Administrator: nick Madyn, kontakt przez Discord (link jest w `apps/web/src/legalConfig.ts`, można go nadpisać zmienną `VITE_DISCORD_URL`).
-- [ ] **HTTPS i hosting.** Wystaw front (`npm run build`, katalog `apps/web/dist`) i API za HTTPS. Sprawdź, czy dostawca hostingu nie zbiera logów z adresami IP, i dopisz go do polityki prywatności, jeśli tak.
-- [x] **Nazwy turniejów i sponsorów.** Nazwy istniejących imprez z nazwami sponsorów (np. Tata Steel, Norway Chess, Grenke, Superbet, Sinquefield) zostały zastąpione wymyślonymi.
-- [x] **Licencja.** Repozytorium jest bez licencji (wszelkie prawa zastrzeżone) i, dopóki jest tymczasowo udostępnione testerom, tak ma zostać. Testerzy mogą uruchomić grę i zgłaszać błędy, ale nie mają praw do kopiowania i rozpowszechniania kodu.
-- [x] **Ochrona API.** Limity zapytań na adres IP (120 na minutę ogółem, 10 na minutę dla zakładania kont i wysyłania wyników, 20 dla startu kariery, 5 dla usuwania), limit 50 niedokończonych karier na konto i porządki w bazie. Za reverse proxy ustaw `TRUST_PROXY=1`, a w produkcji `CORS_ORIGIN=https://twoja-domena.pl`.
-- [x] **Kopia zapasowa.** Serwer sam robi jedną kopię `db.json.bak` raz na 24 godziny (podmieniana) i przy uszkodzeniu bazy wczytuje ją automatycznie. Przy utracie bazy tracimy najwyżej dobę rankingu. Dla pewności trzymaj kopię `db.json.bak` także poza serwerem.
-- [ ] **Moderacja.** Imiona w rankingu nie są filtrowane pod kątem wulgaryzmów. Zgłoszenia przychodzą przez Discord; wpis można usunąć ręcznie z bazy.
-- [ ] **Dostępność.** Ekrany zostały przeskanowane axe-core (WCAG 2.1 AA, jasny i ciemny motyw, komputer i telefon) bez błędów; pozostały jedynie uwagi o kolejności nagłówków.
 
 ## Dla programistów
 
